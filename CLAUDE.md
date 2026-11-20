@@ -41,4 +41,6 @@ There is no test suite.
 
 - Design tokens are defined in `app/globals.css` via `@theme inline`. Colors include `ink`, `panel`, `line`, `text`, `muted`, `pink`, `cyan`, `gold`, `lime`, and `danger`. Fonts are `font-sans` (Space Grotesk), `font-mono` (JetBrains Mono), and `font-pixel` (Silkscreen), loaded with `next/font` in `app/layout.tsx`.
 - Arcade effects are plain CSS classes prefixed `lm-` in `globals.css`: `lm-blink`, `lm-pulse`, `lm-scan`, `lm-stripes*` placeholders, `lm-btn-primary`, `lm-btn-ghost`, `lm-card`, `lm-neon-pink`, `lm-crt`. Reuse them rather than re-inlining glow and shadow values.
+- Matching the design pixel-for-pixel depends on two quirks of the reference. First, it inherits `line-height: normal`, so `globals.css` resets Tailwind's 1.5 default, including the `--text-*--line-height` tokens. Second, it uses `box-sizing: content-box`, so a border adds to the declared size. Give any element with both an explicit size (`h-*`, `size-*`, `w-*`, `aspect-*`) and a border the `box-content` class.
+- `lm-*` classes live in `@layer components`, so Tailwind utilities can override them (e.g. `max-lg:shadow-[…]` on `lm-btn-primary`).
 - The CRT scanline overlay is rendered once in the root layout. It is toggled through `html[data-crt="off"]` by `CrtToggle`. The blink, pulse, and scan animations respect `prefers-reduced-motion`.
