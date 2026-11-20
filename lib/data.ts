@@ -29,6 +29,8 @@ export type Game = {
   popularity: number;
   releasedAt: string; // ISO
   tagline: string;
+  /** Versión corta del tagline para móvil. */
+  taglineShort?: string;
   description: string;
 };
 
@@ -53,6 +55,7 @@ export const games: Game[] = [
     releasedAt: "2026-03-02",
     tagline:
       "Esquiva lluvia de asteroides, recoge chatarra espacial y encadena combos hasta que la nave no aguante más. Partidas de 3 minutos.",
+    taglineShort: "Esquiva asteroides, encadena combos. Partidas de 3 minutos.",
     description:
       "Un cometa se partió en mil pedazos y todos vienen hacia tu nave. Cada ola acelera el ritmo; cada fragmento recogido suma al multiplicador. Pierdes una vida por impacto: tienes tres.",
   },
@@ -260,13 +263,13 @@ export function gamesByCategory(category: Category) {
 
 export const featuredGame = games[0];
 
-export const popularGames = [...games]
-  .sort((a, b) => b.popularity - a.popularity)
-  .slice(0, 4);
+// Selecciones editoriales de la Home (mismo orden que el diseño).
+// TODO: sustituir por los endpoints de "populares" y "novedades".
+const pick = (slugs: string[]) => slugs.map((s) => getGame(s)!);
 
-export const newReleases = [...games]
-  .sort((a, b) => b.releasedAt.localeCompare(a.releasedAt))
-  .slice(0, 6);
+export const popularGames = pick(["cometa-loca", "salto-pixel", "bloques-bravos", "turbo-taco"]);
+
+export const newReleases = pick(["puno-neon", "ladrillazo", "rana-turbo", "galaxia-chicle", "mina-magica", "dino-derrape"]);
 
 export const categories: { name: Category; color: string }[] = [
   { name: "Shooter", color: "#FF2E88" },
