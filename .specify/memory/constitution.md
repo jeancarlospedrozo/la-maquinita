@@ -1,17 +1,3 @@
-<!--
-Sync Impact Report
-- Version change: (unversioned template) → 1.0.0
-- Modified principles: all five template placeholders replaced (initial adoption)
-  - [PRINCIPLE_1_NAME] → I. Spanish-First Experience
-  - [PRINCIPLE_2_NAME] → II. Design Fidelity
-  - [PRINCIPLE_3_NAME] → III. Cache Components Compliance
-  - [PRINCIPLE_4_NAME] → IV. Server-First Components
-  - [PRINCIPLE_5_NAME] → V. Data Behind a Seam
-- Added sections: Technology Constraints; Development Workflow & Quality Gates
-- Removed sections: none
-- Deferred TODOs: none. Ratification date set to the day of first adoption (2026-11-23).
--->
-
 # La Maquinita Constitution
 
 ## Core Principles
