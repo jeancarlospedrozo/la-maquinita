@@ -14,10 +14,13 @@ La Maquinita is a Spanish-language arcade games portal built with Next.js 16 (Ap
 npm run dev        # dev server (localhost:3000)
 npm run build      # production build; also validates Cache Components prerender rules
 npm run lint       # ESLint (next core-web-vitals + typescript, includes React Compiler rules)
+npm run format     # Prettier (with prettier-plugin-tailwindcss class sorting); format:check to verify
 npx tsc --noEmit   # typecheck; run `npx next typegen` first if PageProps/LayoutProps route types are missing
 ```
 
 There is no test suite.
+
+A project hook (`.claude/settings.json` → `.claude/hooks/format-and-lint.mjs`) runs Prettier and, for JS/TS files, `eslint --fix` after every Write/Edit. Unfixable ESLint errors are reported back (exit 2) and must be fixed.
 
 ## Next.js config that shapes the code
 
