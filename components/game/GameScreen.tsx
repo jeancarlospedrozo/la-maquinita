@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { Blink } from "@/components/ui";
 
 /**
@@ -77,7 +83,10 @@ export function GameScreen({
   // --- Modo demo: puntos continuos, una vida menos cada ~6 s ---
   useEffect(() => {
     if (state !== "playing") return;
-    const tick = setInterval(() => setScore((s) => s + 137 + Math.floor(Math.random() * 400)), 100);
+    const tick = setInterval(
+      () => setScore((s) => s + 137 + Math.floor(Math.random() * 400)),
+      100,
+    );
     const hit = setInterval(() => setLives((l) => l - 1), 6000);
     return () => {
       clearInterval(tick);
@@ -91,7 +100,9 @@ export function GameScreen({
   }, [lives, state, score, endGame]);
 
   const togglePause = useCallback(() => {
-    setState((s) => (s === "playing" ? "pause" : s === "pause" ? "playing" : s));
+    setState((s) =>
+      s === "playing" ? "pause" : s === "pause" ? "playing" : s,
+    );
   }, []);
 
   const saveRecord = useCallback(() => {
@@ -114,14 +125,24 @@ export function GameScreen({
       if (state === "start" && (e.key === "Enter" || e.key === " ")) {
         e.preventDefault();
         start();
-      } else if ((state === "playing" || state === "pause") && (e.key === "p" || e.key === "P" || e.key === "Escape")) {
+      } else if (
+        (state === "playing" || state === "pause") &&
+        (e.key === "p" || e.key === "P" || e.key === "Escape")
+      ) {
         togglePause();
       } else if (state === "over" && e.key === "Enter") {
         start();
       } else if (state === "record") {
         const cycle = (d: number) =>
           setInitials((arr) =>
-            arr.map((ch, i) => (i === cursor ? ALPHABET[(ALPHABET.indexOf(ch) + d + ALPHABET.length) % ALPHABET.length] : ch)),
+            arr.map((ch, i) =>
+              i === cursor
+                ? ALPHABET[
+                    (ALPHABET.indexOf(ch) + d + ALPHABET.length) %
+                      ALPHABET.length
+                  ]
+                : ch,
+            ),
           );
         if (e.key === "ArrowUp") cycle(-1);
         else if (e.key === "ArrowDown") cycle(1);
@@ -129,7 +150,9 @@ export function GameScreen({
         else if (e.key === "ArrowRight") setCursor((c) => Math.min(2, c + 1));
         else if (e.key === "Enter") saveRecord();
         else if (/^[a-z0-9]$/i.test(e.key)) {
-          setInitials((arr) => arr.map((ch, i) => (i === cursor ? e.key.toUpperCase() : ch)));
+          setInitials((arr) =>
+            arr.map((ch, i) => (i === cursor ? e.key.toUpperCase() : ch)),
+          );
           setCursor((c) => Math.min(2, c + 1));
         } else return;
         e.preventDefault();
@@ -139,9 +162,12 @@ export function GameScreen({
     return () => window.removeEventListener("keydown", onKey);
   }, [state, cursor, start, togglePause, saveRecord]);
 
-  const shownScore = state === "over" || state === "record" ? finalScore : score;
+  const shownScore =
+    state === "over" || state === "record" ? finalScore : score;
   const shownLives = state === "over" || state === "record" ? 0 : lives;
-  const level = String(Math.min(99, 1 + Math.floor(shownScore / 9000))).padStart(2, "0");
+  const level = String(
+    Math.min(99, 1 + Math.floor(shownScore / 9000)),
+  ).padStart(2, "0");
 
   const overlay = (
     <Overlay
@@ -164,22 +190,46 @@ export function GameScreen({
     />
   );
 
-
   return (
     <div className="flex min-h-full flex-1 flex-col bg-deep">
       {/* Barra superior (escritorio) */}
       <div className="hidden h-[52px] items-center gap-5 border-b border-panel px-8 text-sm text-muted lg:flex">
-        <Link href={`/juegos/${slug}`} className="text-cyan hover:text-text">← Salir</Link>
-        <span className="font-pixel text-sm text-text lm-logo-glow">LA MAQUINITA</span>
-        <span className="ml-auto">Modo foco · la navegación se oculta mientras juegas</span>
+        <Link href={`/juegos/${slug}`} className="text-cyan hover:text-text">
+          ← Salir
+        </Link>
+        <span className="lm-logo-glow font-pixel text-sm text-text">
+          LA MAQUINITA
+        </span>
+        <span className="ml-auto">
+          Modo foco · la navegación se oculta mientras juegas
+        </span>
       </div>
       {/* Barra superior (móvil) */}
       <div className="flex h-11 items-center gap-3 px-4 text-sm lg:hidden">
-        <Link href={`/juegos/${slug}`} aria-label="Salir" className="text-cyan">←</Link>
-        <span className="font-pixel text-sm uppercase lm-logo-glow">{name}</span>
+        <Link href={`/juegos/${slug}`} aria-label="Salir" className="text-cyan">
+          ←
+        </Link>
+        <span className="lm-logo-glow font-pixel text-sm uppercase">
+          {name}
+        </span>
         <span className="ml-auto flex gap-2">
-          <button type="button" onClick={togglePause} aria-label="Pausa" className="grid size-[34px] place-items-center rounded border border-line text-xs">II</button>
-          <button type="button" onClick={() => setSound((v) => !v)} aria-label="Sonido" aria-pressed={sound} className={`grid size-[34px] place-items-center rounded border border-line text-xs ${sound ? "" : "text-muted line-through"}`}>♪</button>
+          <button
+            type="button"
+            onClick={togglePause}
+            aria-label="Pausa"
+            className="grid size-[34px] place-items-center rounded border border-line text-xs"
+          >
+            II
+          </button>
+          <button
+            type="button"
+            onClick={() => setSound((v) => !v)}
+            aria-label="Sonido"
+            aria-pressed={sound}
+            className={`grid size-[34px] place-items-center rounded border border-line text-xs ${sound ? "" : "text-muted line-through"}`}
+          >
+            ♪
+          </button>
         </span>
       </div>
       {/* HUD móvil */}
@@ -189,11 +239,14 @@ export function GameScreen({
         <span className="text-[13px] text-cyan">LV {level}</span>
       </div>
 
-      <div className="mx-auto w-full max-w-[1440px] lg:grid lg:grid-cols-[240px_1fr_240px] lg:items-center lg:gap-8 lg:px-12 lg:pb-14 lg:pt-10">
+      <div className="mx-auto w-full max-w-[1440px] lg:grid lg:grid-cols-[240px_1fr_240px] lg:items-center lg:gap-8 lg:px-12 lg:pt-10 lg:pb-14">
         {/* HUD izquierdo */}
         <div className="hidden flex-col gap-4 lg:flex">
           <HudBox label="PUNTUACIÓN">
-            <span className="font-mono text-[34px] text-gold" style={{ textShadow: "0 0 12px rgba(255,214,10,.5)" }}>
+            <span
+              className="font-mono text-[34px] text-gold"
+              style={{ textShadow: "0 0 12px rgba(255,214,10,.5)" }}
+            >
               {fmtHud(shownScore)}
             </span>
           </HudBox>
@@ -208,12 +261,18 @@ export function GameScreen({
         {/* Cabina */}
         <div
           ref={cabinetRef}
-          className="flex flex-col gap-[18px] lg:rounded-b-lg lg:rounded-t-[18px] lg:border-2 lg:border-line lg:px-7 lg:pb-7 lg:pt-5"
-          style={{ background: "linear-gradient(180deg,#1A1033,#120B24)", boxShadow: "0 0 60px rgba(255,46,136,.18)" }}
+          className="flex flex-col gap-[18px] lg:rounded-t-[18px] lg:rounded-b-lg lg:border-2 lg:border-line lg:px-7 lg:pt-5 lg:pb-7"
+          style={{
+            background: "linear-gradient(180deg,#1A1033,#120B24)",
+            boxShadow: "0 0 60px rgba(255,46,136,.18)",
+          }}
         >
           <div
-            className="hidden h-14 place-items-center rounded-md border-[1.5px] border-pink bg-ink font-pixel text-[26px] uppercase tracking-[2px] lg:grid"
-            style={{ textShadow: "0 0 6px #FF2E88,0 0 20px rgba(255,46,136,.8)", boxShadow: "inset 0 0 20px rgba(255,46,136,.25)" }}
+            className="hidden h-14 place-items-center rounded-md border-[1.5px] border-pink bg-ink font-pixel text-[26px] tracking-[2px] uppercase lg:grid"
+            style={{
+              textShadow: "0 0 6px #FF2E88,0 0 20px rgba(255,46,136,.8)",
+              boxShadow: "inset 0 0 20px rgba(255,46,136,.25)",
+            }}
           >
             {name}
           </div>
@@ -228,10 +287,19 @@ export function GameScreen({
             {overlay}
           </div>
           <div className="hidden justify-center gap-2.5 lg:flex">
-            <CtrlButton onClick={togglePause} disabled={state !== "playing" && state !== "pause"}>II  Pausa</CtrlButton>
-            <CtrlButton onClick={() => setSound((v) => !v)}>{`♪  Sonido${sound ? "" : " (off)"}`}</CtrlButton>
-            <CtrlButton onClick={fullscreen}>⤢  Pantalla completa</CtrlButton>
-            <CtrlButton onClick={start} disabled={state === "loading"}>↻  Reiniciar</CtrlButton>
+            <CtrlButton
+              onClick={togglePause}
+              disabled={state !== "playing" && state !== "pause"}
+            >
+              II Pausa
+            </CtrlButton>
+            <CtrlButton
+              onClick={() => setSound((v) => !v)}
+            >{`♪  Sonido${sound ? "" : " (off)"}`}</CtrlButton>
+            <CtrlButton onClick={fullscreen}>⤢ Pantalla completa</CtrlButton>
+            <CtrlButton onClick={start} disabled={state === "loading"}>
+              ↻ Reiniciar
+            </CtrlButton>
           </div>
         </div>
 
@@ -240,13 +308,22 @@ export function GameScreen({
           <HudBox label="TU RÉCORD">
             <span className="font-mono text-[26px]">{fmtScore(best)}</span>
           </HudBox>
-          <div className="flex flex-col gap-1.5 rounded-md border border-gold bg-ink p-5" style={{ boxShadow: "0 0 16px rgba(255,214,10,.2)" }}>
-            <span className="font-mono text-[11px] tracking-[1.5px] text-muted">RÉCORD GLOBAL</span>
-            <span className="font-mono text-[26px] text-gold">{globalRecord}</span>
+          <div
+            className="flex flex-col gap-1.5 rounded-md border border-gold bg-ink p-5"
+            style={{ boxShadow: "0 0 16px rgba(255,214,10,.2)" }}
+          >
+            <span className="font-mono text-[11px] tracking-[1.5px] text-muted">
+              RÉCORD GLOBAL
+            </span>
+            <span className="font-mono text-[26px] text-gold">
+              {globalRecord}
+            </span>
             <span className="text-[13px] text-muted">{globalHolder}</span>
           </div>
           <div className="flex flex-col gap-2 rounded-md border border-line bg-ink p-5 text-[13px] text-muted">
-            <span className="font-mono text-[11px] tracking-[1.5px]">CONTROLES</span>
+            <span className="font-mono text-[11px] tracking-[1.5px]">
+              CONTROLES
+            </span>
             <span>← ↑ → ↓ mover</span>
             <span>ESPACIO disparar</span>
             <span>X escudo · P pausa</span>
@@ -260,13 +337,21 @@ export function GameScreen({
   );
 }
 
-function CtrlButton({ children, onClick, disabled }: { children: ReactNode; onClick: () => void; disabled?: boolean }) {
+function CtrlButton({
+  children,
+  onClick,
+  disabled,
+}: {
+  children: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex h-11 items-center gap-2 whitespace-pre rounded border border-line bg-ink px-[18px] text-sm font-medium hover:border-cyan hover:text-cyan disabled:opacity-40 disabled:hover:border-line disabled:hover:text-text"
+      className="flex h-11 items-center gap-2 rounded border border-line bg-ink px-[18px] text-sm font-medium whitespace-pre hover:border-cyan hover:text-cyan disabled:opacity-40 disabled:hover:border-line disabled:hover:text-text"
     >
       {children}
     </button>
@@ -276,7 +361,9 @@ function CtrlButton({ children, onClick, disabled }: { children: ReactNode; onCl
 function HudBox({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-2 rounded-md border border-line bg-ink p-5">
-      <span className="font-mono text-[11px] tracking-[1.5px] text-muted">{label}</span>
+      <span className="font-mono text-[11px] tracking-[1.5px] text-muted">
+        {label}
+      </span>
       {children}
     </div>
   );
@@ -318,15 +405,24 @@ function Overlay(p: {
   onSave: () => void;
   onPickSlot: (i: number) => void;
 }) {
-  const base = "absolute inset-0 flex flex-col items-center justify-center text-center px-4";
+  const base =
+    "absolute inset-0 flex flex-col items-center justify-center text-center px-4";
   switch (p.state) {
     case "loading":
       return (
         <div className={`${base} gap-5 bg-deep`} role="status">
-          <span className="font-pixel text-xl text-cyan lg:text-[28px]">CARGANDO</span>
+          <span className="font-pixel text-xl text-cyan lg:text-[28px]">
+            CARGANDO
+          </span>
           <div className="flex h-[22px] w-full max-w-[360px] gap-[3px] border-2 border-cyan p-[3px]">
             {Array.from({ length: 14 }, (_, i) => (
-              <span key={i} className="flex-1" style={{ background: i < p.progress ? "#00E5FF" : "transparent" }} />
+              <span
+                key={i}
+                className="flex-1"
+                style={{
+                  background: i < p.progress ? "#00E5FF" : "transparent",
+                }}
+              />
             ))}
           </div>
           <span className="font-mono text-xs text-muted lg:text-[13px]">
@@ -336,9 +432,17 @@ function Overlay(p: {
       );
     case "start":
       return (
-        <button type="button" onClick={p.onStart} className={`${base} gap-7 bg-deep/60`}>
-          <span className="font-pixel text-[32px] uppercase leading-none lm-neon-pink lg:text-[56px]">{p.name}</span>
-          <Blink className="font-pixel text-lg text-gold lg:text-[26px]">PRESS START</Blink>
+        <button
+          type="button"
+          onClick={p.onStart}
+          className={`${base} gap-7 bg-deep/60`}
+        >
+          <span className="lm-neon-pink font-pixel text-[32px] leading-none uppercase lg:text-[56px]">
+            {p.name}
+          </span>
+          <Blink className="font-pixel text-lg text-gold lg:text-[26px]">
+            PRESS START
+          </Blink>
           <span className="font-mono text-xs text-muted lg:text-sm">
             Récord global {p.globalRecord} · {p.globalHolder}
           </span>
@@ -347,16 +451,31 @@ function Overlay(p: {
     case "pause":
       return (
         <div className={`${base} gap-4 bg-deep/[.82]`}>
-          <span className="mb-3 font-pixel text-[40px] text-cyan lg:text-5xl" style={{ textShadow: "0 0 20px rgba(0,229,255,.7)" }}>
+          <span
+            className="mb-3 font-pixel text-[40px] text-cyan lg:text-5xl"
+            style={{ textShadow: "0 0 20px rgba(0,229,255,.7)" }}
+          >
             PAUSA
           </span>
-          <button type="button" onClick={p.onResume} autoFocus className="lm-btn-primary h-[52px] w-full max-w-[280px] rounded font-bold">
+          <button
+            type="button"
+            onClick={p.onResume}
+            autoFocus
+            className="lm-btn-primary h-[52px] w-full max-w-[280px] rounded font-bold"
+          >
             ▶ Continuar
           </button>
-          <button type="button" onClick={p.onRestart} className="lm-btn-ghost h-[52px] w-full max-w-[280px] rounded font-semibold">
+          <button
+            type="button"
+            onClick={p.onRestart}
+            className="lm-btn-ghost h-[52px] w-full max-w-[280px] rounded font-semibold"
+          >
             Reiniciar
           </button>
-          <Link href={`/juegos/${p.slug}`} className="grid h-[52px] w-full max-w-[280px] place-items-center font-medium text-muted hover:text-text">
+          <Link
+            href={`/juegos/${p.slug}`}
+            className="grid h-[52px] w-full max-w-[280px] place-items-center font-medium text-muted hover:text-text"
+          >
             Salir al detalle
           </Link>
         </div>
@@ -365,12 +484,21 @@ function Overlay(p: {
       const diff = p.best - p.finalScore;
       return (
         <div className={`${base} gap-5 bg-deep/[.85]`}>
-          <span className="font-pixel text-[40px] text-danger lg:text-[64px]" style={{ textShadow: "0 0 8px #FF3B3B,0 0 30px rgba(255,59,59,.7)" }}>
+          <span
+            className="font-pixel text-[40px] text-danger lg:text-[64px]"
+            style={{
+              textShadow: "0 0 8px #FF3B3B,0 0 30px rgba(255,59,59,.7)",
+            }}
+          >
             GAME OVER
           </span>
           <div className="flex flex-col items-center gap-1.5">
-            <span className="font-mono text-[13px] tracking-[2px] text-muted">PUNTUACIÓN FINAL</span>
-            <span className="font-mono text-4xl text-gold lg:text-5xl">{fmtScore(p.finalScore)}</span>
+            <span className="font-mono text-[13px] tracking-[2px] text-muted">
+              PUNTUACIÓN FINAL
+            </span>
+            <span className="font-mono text-4xl text-gold lg:text-5xl">
+              {fmtScore(p.finalScore)}
+            </span>
             <span className="text-sm text-muted">
               {p.saved
                 ? "¡Récord guardado!"
@@ -378,22 +506,37 @@ function Overlay(p: {
             </span>
           </div>
           <div className="mt-2 flex gap-3">
-            <button type="button" onClick={p.onRestart} autoFocus className="lm-btn-primary h-[52px] rounded px-7 font-bold">
+            <button
+              type="button"
+              onClick={p.onRestart}
+              autoFocus
+              className="lm-btn-primary h-[52px] rounded px-7 font-bold"
+            >
               ↻ Reintentar
             </button>
-            <Link href={`/juegos/${p.slug}`} className="lm-btn-ghost grid h-[52px] place-items-center rounded px-6 font-semibold">
+            <Link
+              href={`/juegos/${p.slug}`}
+              className="lm-btn-ghost grid h-[52px] place-items-center rounded px-6 font-semibold"
+            >
               Salir
             </Link>
           </div>
-          <Blink className="font-pixel text-sm text-gold">INSERT COIN TO CONTINUE</Blink>
+          <Blink className="font-pixel text-sm text-gold">
+            INSERT COIN TO CONTINUE
+          </Blink>
         </div>
       );
     }
     case "record":
       return (
         <div className={`${base} gap-[22px] bg-deep/[.85]`}>
-          <span className="lm-pulse font-pixel text-[28px] text-gold lg:text-[44px]">¡NUEVO RÉCORD!</span>
-          <span className="font-mono text-4xl text-lime lg:text-[52px]" style={{ textShadow: "0 0 16px rgba(57,255,20,.6)" }}>
+          <span className="lm-pulse font-pixel text-[28px] text-gold lg:text-[44px]">
+            ¡NUEVO RÉCORD!
+          </span>
+          <span
+            className="font-mono text-4xl text-lime lg:text-[52px]"
+            style={{ textShadow: "0 0 16px rgba(57,255,20,.6)" }}
+          >
             {fmtScore(p.finalScore)}
           </span>
           <span className="text-[15px] text-muted">Ingresa tus iniciales</span>
@@ -408,14 +551,27 @@ function Overlay(p: {
                   aria-label={`Inicial ${i + 1}: ${ch}`}
                   className="flex flex-col items-center gap-1.5"
                 >
-                  <span className="text-xs" style={{ color: on ? "#FFD60A" : "#2A2347" }}>▲</span>
+                  <span
+                    className="text-xs"
+                    style={{ color: on ? "#FFD60A" : "#2A2347" }}
+                  >
+                    ▲
+                  </span>
                   <span
                     className={`grid h-[76px] w-16 place-items-center rounded border-2 bg-ink font-pixel text-[40px] ${on && ch === "_" ? "lm-blink" : ""}`}
-                    style={{ borderColor: on ? "#FFD60A" : "#2A2347", boxShadow: on ? "0 0 16px rgba(255,214,10,.5)" : "none" }}
+                    style={{
+                      borderColor: on ? "#FFD60A" : "#2A2347",
+                      boxShadow: on ? "0 0 16px rgba(255,214,10,.5)" : "none",
+                    }}
                   >
                     {ch}
                   </span>
-                  <span className="text-xs" style={{ color: on ? "#FFD60A" : "#2A2347" }}>▼</span>
+                  <span
+                    className="text-xs"
+                    style={{ color: on ? "#FFD60A" : "#2A2347" }}
+                  >
+                    ▼
+                  </span>
                 </button>
               );
             })}
@@ -437,18 +593,43 @@ function Overlay(p: {
 
 function TouchControls({ onA }: { onA?: () => void }) {
   // TODO: conectar a la entrada del motor del juego.
-  const pad = "grid place-items-center border-[1.5px] border-cyan bg-line text-cyan active:bg-cyan active:text-ink";
+  const pad =
+    "grid place-items-center border-[1.5px] border-cyan bg-line text-cyan active:bg-cyan active:text-ink";
   return (
-    <div className="flex items-center justify-between px-7 pb-8 pt-6 lg:hidden">
+    <div className="flex items-center justify-between px-7 pt-6 pb-8 lg:hidden">
       <div className="grid grid-cols-[repeat(3,48px)] grid-rows-[repeat(3,48px)]">
         <span />
-        <button type="button" aria-label="Arriba" className={`${pad} rounded-t-md`}>▲</button>
+        <button
+          type="button"
+          aria-label="Arriba"
+          className={`${pad} rounded-t-md`}
+        >
+          ▲
+        </button>
         <span />
-        <button type="button" aria-label="Izquierda" className={`${pad} rounded-l-md`}>◀</button>
+        <button
+          type="button"
+          aria-label="Izquierda"
+          className={`${pad} rounded-l-md`}
+        >
+          ◀
+        </button>
         <span className="bg-line" />
-        <button type="button" aria-label="Derecha" className={`${pad} rounded-r-md`}>▶</button>
+        <button
+          type="button"
+          aria-label="Derecha"
+          className={`${pad} rounded-r-md`}
+        >
+          ▶
+        </button>
         <span />
-        <button type="button" aria-label="Abajo" className={`${pad} rounded-b-md`}>▼</button>
+        <button
+          type="button"
+          aria-label="Abajo"
+          className={`${pad} rounded-b-md`}
+        >
+          ▼
+        </button>
         <span />
       </div>
       <div className="flex items-end gap-4">
@@ -465,7 +646,10 @@ function TouchControls({ onA }: { onA?: () => void }) {
           aria-label="A · disparar"
           onClick={onA}
           className="mb-6 grid size-[72px] place-items-center rounded-full bg-pink font-pixel text-2xl text-ink active:translate-y-[3px]"
-          style={{ boxShadow: "0 0 22px rgba(255,46,136,.6),inset 0 -5px 0 rgba(0,0,0,.3)" }}
+          style={{
+            boxShadow:
+              "0 0 22px rgba(255,46,136,.6),inset 0 -5px 0 rgba(0,0,0,.3)",
+          }}
         >
           A
         </button>

@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${silkscreen.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-ink text-text">
+      <body className="flex min-h-full flex-col bg-ink text-text">
         {children}
         <div className="lm-crt" aria-hidden />
       </body>

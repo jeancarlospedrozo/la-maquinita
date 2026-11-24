@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <SiteShell active="home" loggedIn={false}>
       {/* HERO */}
-      <section className="lm-hero-bg relative overflow-hidden px-5 py-7 lg:grid lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-16 lg:px-12 lg:pb-24 lg:pt-20">
+      <section className="lm-hero-bg relative overflow-hidden px-5 py-7 lg:grid lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-16 lg:px-12 lg:pt-20 lg:pb-24">
         <div
           aria-hidden
           className="lm-grid-floor pointer-events-none absolute inset-x-0 bottom-0 hidden h-50 lg:block"
@@ -54,7 +54,7 @@ export default function Home() {
               JUEGO DESTACADO · {g.category.toUpperCase()}
             </span>
           </div>
-          <h1 className="font-pixel text-[44px] leading-none lm-neon-pink lg:text-[88px] lg:leading-[.95]">
+          <h1 className="lm-neon-pink font-pixel text-[44px] leading-none lg:text-[88px] lg:leading-[.95]">
             {g.name.split(" ").map((w, i) => (
               <span key={i} className="lg:block">
                 {w}{" "}
@@ -91,7 +91,7 @@ export default function Home() {
       </section>
 
       {/* POPULARES */}
-      <section className="flex flex-col gap-3.5 pl-5 pt-3 lg:gap-6 lg:px-12 lg:pt-16">
+      <section className="flex flex-col gap-3.5 pt-3 pl-5 lg:gap-6 lg:px-12 lg:pt-16">
         <div className="flex items-end gap-4">
           <SectionTitle>
             <span className="lg:hidden">Populares</span>
@@ -107,7 +107,7 @@ export default function Home() {
           </span>
         </div>
         {/* Móvil: carrusel horizontal */}
-        <div className="flex gap-3 overflow-x-auto pr-5 scrollbar-none lg:hidden">
+        <div className="flex scrollbar-none gap-3 overflow-x-auto pr-5 lg:hidden">
           {popularGames.map((p) => (
             <Link
               key={p.slug}
@@ -135,7 +135,7 @@ export default function Home() {
             <Link
               key={c.name}
               href={`/juegos?cat=${encodeURIComponent(c.name)}`}
-              className="rounded-[3px] border border-l-[3px] border-line border-l-(--c) bg-panel px-3.5 py-2 text-[13px] font-medium transition-colors hover:bg-line lg:flex lg:flex-col lg:gap-1.5 lg:rounded lg:border-l lg:border-t-[3px] lg:border-l-line lg:border-t-(--c) lg:px-5 lg:py-5.5"
+              className="rounded-[3px] border border-l-[3px] border-line border-l-(--c) bg-panel px-3.5 py-2 text-[13px] font-medium transition-colors hover:bg-line lg:flex lg:flex-col lg:gap-1.5 lg:rounded lg:border-t-[3px] lg:border-l lg:border-t-(--c) lg:border-l-line lg:px-5 lg:py-5.5"
               style={{ "--c": c.color } as CSSProperties}
             >
               <span className="lg:text-[17px] lg:font-semibold">{c.name}</span>
@@ -239,7 +239,7 @@ export default function Home() {
       </section>
 
       {/* NUEVOS LANZAMIENTOS */}
-      <section className="hidden flex-col gap-6 px-12 pb-20 pt-16 lg:flex">
+      <section className="hidden flex-col gap-6 px-12 pt-16 pb-20 lg:flex">
         <SectionTitle>Nuevos lanzamientos</SectionTitle>
         <div className="grid grid-cols-6 gap-4">
           {newReleases.map((n) => (

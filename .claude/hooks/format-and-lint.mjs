@@ -5,7 +5,9 @@ import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-const projectDir = path.resolve(process.env.CLAUDE_PROJECT_DIR ?? process.cwd());
+const projectDir = path.resolve(
+  process.env.CLAUDE_PROJECT_DIR ?? process.cwd(),
+);
 const bin = (name) => path.join(projectDir, "node_modules", ".bin", name);
 
 let input;
@@ -20,7 +22,8 @@ if (!filePath) process.exit(0);
 
 const abs = path.resolve(projectDir, filePath);
 const rel = path.relative(projectDir, abs);
-if (rel.startsWith("..") || path.isAbsolute(rel) || !existsSync(abs)) process.exit(0);
+if (rel.startsWith("..") || path.isAbsolute(rel) || !existsSync(abs))
+  process.exit(0);
 
 const run = (cmd, args) =>
   spawnSync(cmd, args, { cwd: projectDir, encoding: "utf8" });
@@ -28,13 +31,23 @@ const run = (cmd, args) =>
 const problems = [];
 
 if (existsSync(bin("prettier"))) {
-  const r = run(bin("prettier"), ["--write", "--ignore-unknown", "--log-level", "warn", abs]);
-  if (r.status !== 0) problems.push(`Prettier falló en ${rel}:\n${r.stderr || r.stdout}`);
+  const r = run(bin("prettier"), [
+    "--write",
+    "--ignore-unknown",
+    "--log-level",
+    "warn",
+    abs,
+  ]);
+  if (r.status !== 0)
+    problems.push(`Prettier falló en ${rel}:\n${r.stderr || r.stdout}`);
 }
 
 if (/\.(m|c)?[jt]sx?$/.test(abs) && existsSync(bin("eslint"))) {
   const r = run(bin("eslint"), ["--fix", "--no-warn-ignored", "--quiet", abs]);
-  if (r.status !== 0) problems.push(`ESLint encontró errores en ${rel}:\n${r.stdout || r.stderr}`);
+  if (r.status !== 0)
+    problems.push(
+      `ESLint encontró errores en ${rel}:\n${r.stdout || r.stderr}`,
+    );
 }
 
 if (problems.length) {

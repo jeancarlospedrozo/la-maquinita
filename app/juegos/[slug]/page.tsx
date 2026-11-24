@@ -2,7 +2,10 @@ import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FavShareButtons, GameLeaderboard } from "@/components/detail/DetailClient";
+import {
+  FavShareButtons,
+  GameLeaderboard,
+} from "@/components/detail/DetailClient";
 import { SiteShell } from "@/components/SiteShell";
 import { BadgeTag, Chip, Placeholder } from "@/components/ui";
 import { achievements, currentPlayer, games, getGame } from "@/lib/data";
@@ -11,26 +14,41 @@ export function generateStaticParams() {
   return games.map((g) => ({ slug: g.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps<"/juegos/[slug]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/juegos/[slug]">): Promise<Metadata> {
   const game = getGame((await params).slug);
   return game ? { title: game.name, description: game.tagline } : {};
 }
 
-export default async function GameDetailPage({ params }: PageProps<"/juegos/[slug]">) {
+export default async function GameDetailPage({
+  params,
+}: PageProps<"/juegos/[slug]">) {
   const { slug } = await params;
   const game = getGame(slug);
   if (!game) notFound();
 
   const similar = [
-    ...games.filter((g) => g.category === game.category && g.slug !== game.slug),
+    ...games.filter(
+      (g) => g.category === game.category && g.slug !== game.slug,
+    ),
     ...games.filter((g) => g.category !== game.category),
   ].slice(0, 4);
 
   return (
     <SiteShell active="juegos">
-      <nav aria-label="Migas de pan" className="hidden gap-2.5 px-12 pt-6 text-sm text-muted lg:flex">
-        <Link href="/juegos" className="text-cyan hover:text-text">Juegos</Link>/
-        <Link href={`/juegos?cat=${encodeURIComponent(game.category)}`} className="text-cyan hover:text-text">
+      <nav
+        aria-label="Migas de pan"
+        className="hidden gap-2.5 px-12 pt-6 text-sm text-muted lg:flex"
+      >
+        <Link href="/juegos" className="text-cyan hover:text-text">
+          Juegos
+        </Link>
+        /
+        <Link
+          href={`/juegos?cat=${encodeURIComponent(game.category)}`}
+          className="text-cyan hover:text-text"
+        >
           {game.category}
         </Link>
         /<span className="text-text">{game.name}</span>
@@ -46,7 +64,9 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
             >
               ▶
             </span>
-            <span className="hidden bg-ink px-2.5 py-1.5 font-mono text-xs text-muted lg:inline">tráiler 30 s / gif</span>
+            <span className="hidden bg-ink px-2.5 py-1.5 font-mono text-xs text-muted lg:inline">
+              tráiler 30 s / gif
+            </span>
           </div>
         </div>
 
@@ -60,7 +80,9 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
               <Chip>Dificultad {game.difficulty.toLowerCase()}</Chip>
             </span>
           </div>
-          <h1 className="font-pixel text-4xl leading-none uppercase lm-neon-pink lg:text-[56px]">{game.name}</h1>
+          <h1 className="lm-neon-pink font-pixel text-4xl leading-none uppercase lg:text-[56px]">
+            {game.name}
+          </h1>
           <dl className="flex gap-6 font-mono lg:gap-8">
             <Stat value={`★ ${game.rating}`} label={`${game.votes} votos`} />
             <Stat value={game.plays} label="partidas" />
@@ -76,15 +98,21 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
 
           {/* Controles */}
           <div className="hidden flex-col gap-3.5 rounded-md border border-line bg-panel p-5 lg:flex">
-            <span className="font-mono text-xs tracking-[1.5px] text-muted">CONTROLES</span>
+            <span className="font-mono text-xs tracking-[1.5px] text-muted">
+              CONTROLES
+            </span>
             <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 text-sm">
               <div className="flex gap-1">
                 {["←", "↑", "↓", "→"].map((k) => (
-                  <Key key={k} color="#00E5FF">{k}</Key>
+                  <Key key={k} color="#00E5FF">
+                    {k}
+                  </Key>
                 ))}
               </div>
               <span>Mover la nave</span>
-              <Key color="#FF2E88" wide>ESPACIO</Key>
+              <Key color="#FF2E88" wide>
+                ESPACIO
+              </Key>
               <span>Disparar</span>
               <div className="flex gap-1">
                 <Key color="#FFD60A">X</Key>
@@ -95,7 +123,9 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
           </div>
           <div className="flex items-center gap-3.5 rounded-md border border-line bg-panel p-4 lg:hidden">
             <DPadIcon />
-            <span className="text-sm leading-[1.4] text-muted">Táctil: D-pad para mover, A disparar, B escudo.</span>
+            <span className="text-sm leading-[1.4] text-muted">
+              Táctil: D-pad para mover, A disparar, B escudo.
+            </span>
           </div>
 
           <div className="lg:hidden">
@@ -108,10 +138,16 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
       <div className="hidden grid-cols-[1.6fr_1fr] gap-10 px-12 pt-14 lg:grid">
         <div className="flex flex-col gap-5">
           <h2 className="font-pixel text-2xl">Sobre el juego</h2>
-          <p className="max-w-[720px] text-[17px] leading-[1.65] text-pretty text-muted">{game.description}</p>
+          <p className="max-w-[720px] text-[17px] leading-[1.65] text-pretty text-muted">
+            {game.description}
+          </p>
           <div className="grid grid-cols-3 gap-4">
             {[1, 2, 3].map((n) => (
-              <Placeholder key={n} label={`captura ${n}`} className="aspect-[16/10] rounded border border-line" />
+              <Placeholder
+                key={n}
+                label={`captura ${n}`}
+                className="aspect-[16/10] rounded border border-line"
+              />
             ))}
           </div>
           <h2 className="mt-6 font-pixel text-2xl">Logros disponibles</h2>
@@ -126,12 +162,20 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
                 >
                   <span
                     className="grid size-11 place-items-center rounded border-2 font-pixel text-base"
-                    style={{ borderColor: c, color: c, boxShadow: a.locked ? "none" : "0 0 12px rgba(57,255,20,.45)" }}
+                    style={{
+                      borderColor: c,
+                      color: c,
+                      boxShadow: a.locked
+                        ? "none"
+                        : "0 0 12px rgba(57,255,20,.45)",
+                    }}
                   >
                     {a.icon}
                   </span>
                   <span className="text-[15px] font-semibold">{a.name}</span>
-                  <span className="text-[13px] leading-[1.4] text-muted">{a.desc}</span>
+                  <span className="text-[13px] leading-[1.4] text-muted">
+                    {a.desc}
+                  </span>
                   {a.locked && <span className="sr-only">Bloqueado</span>}
                 </div>
               );
@@ -144,7 +188,7 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
       </div>
 
       {/* Similares */}
-      <section className="hidden flex-col gap-6 px-12 pb-16 pt-14 lg:flex">
+      <section className="hidden flex-col gap-6 px-12 pt-14 pb-16 lg:flex">
         <h2 className="font-pixel text-2xl">Juegos similares</h2>
         <div className="grid grid-cols-4 gap-6">
           {similar.map((g) => (
@@ -155,12 +199,17 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
             >
               <div
                 className="size-[72px] flex-none rounded"
-                style={{ background: "repeating-linear-gradient(135deg,#1A1033 0 8px,#2A2347 8px 16px)" }}
+                style={{
+                  background:
+                    "repeating-linear-gradient(135deg,#1A1033 0 8px,#2A2347 8px 16px)",
+                }}
               />
               <div className="flex flex-col gap-[3px]">
                 <span className="text-[15px] font-semibold">{g.name}</span>
                 <span className="text-xs text-muted">{g.category}</span>
-                <span className="font-mono text-[13px] text-gold">{g.record}</span>
+                <span className="font-mono text-[13px] text-gold">
+                  {g.record}
+                </span>
               </div>
             </Link>
           ))}
@@ -170,19 +219,37 @@ export default async function GameDetailPage({ params }: PageProps<"/juegos/[slu
   );
 }
 
-function Stat({ value, label, gold }: { value: string; label: string; gold?: boolean }) {
+function Stat({
+  value,
+  label,
+  gold,
+}: {
+  value: string;
+  label: string;
+  gold?: boolean;
+}) {
   return (
     <div className="flex flex-col-reverse gap-1">
       <dt className="hidden font-sans text-xs text-muted lg:block">{label}</dt>
       <dd className={`text-[15px] lg:text-xl ${gold ? "text-gold" : ""}`}>
         {value}
-        <span className="lg:hidden">{label === "partidas" ? " partidas" : ""}</span>
+        <span className="lg:hidden">
+          {label === "partidas" ? " partidas" : ""}
+        </span>
       </dd>
     </div>
   );
 }
 
-function Key({ children, color, wide }: { children: ReactNode; color: string; wide?: boolean }) {
+function Key({
+  children,
+  color,
+  wide,
+}: {
+  children: ReactNode;
+  color: string;
+  wide?: boolean;
+}) {
   return (
     <kbd
       className={`lm-key grid h-[30px] place-items-center font-mono ${wide ? "w-[134px] text-xs" : "w-[30px] text-[13px]"}`}
@@ -196,9 +263,15 @@ function Key({ children, color, wide }: { children: ReactNode; color: string; wi
 function DPadIcon() {
   const cells = [0, 1, 0, 1, 2, 1, 0, 1, 0];
   return (
-    <div className="grid grid-cols-[repeat(3,18px)] grid-rows-[repeat(3,18px)]" aria-hidden>
+    <div
+      className="grid grid-cols-[repeat(3,18px)] grid-rows-[repeat(3,18px)]"
+      aria-hidden
+    >
       {cells.map((c, i) => (
-        <span key={i} className={c === 1 ? "bg-cyan" : c === 2 ? "bg-line" : ""} />
+        <span
+          key={i}
+          className={c === 1 ? "bg-cyan" : c === 2 ? "bg-line" : ""}
+        />
       ))}
     </div>
   );

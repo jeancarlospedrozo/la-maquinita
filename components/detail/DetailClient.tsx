@@ -5,7 +5,13 @@ import { SegmentedTabs } from "@/components/ui";
 import { gameLeaderboard, pad2, positionColor } from "@/lib/data";
 import { useFavorites } from "@/lib/useFavorites";
 
-export function FavShareButtons({ slug, name }: { slug: string; name: string }) {
+export function FavShareButtons({
+  slug,
+  name,
+}: {
+  slug: string;
+  name: string;
+}) {
   const { isFav, toggle } = useFavorites();
   const [copied, setCopied] = useState(false);
   const fav = isFav(slug);
@@ -66,9 +72,13 @@ export function GameLeaderboard({ short = false }: { short?: boolean }) {
           <li
             key={r.name}
             className={`grid items-center rounded-[3px] ${
-              short ? "grid-cols-[28px_1fr_auto] gap-2.5 p-2" : "grid-cols-[32px_1fr_auto] gap-3 px-2 py-[9px]"
+              short
+                ? "grid-cols-[28px_1fr_auto] gap-2.5 p-2"
+                : "grid-cols-[32px_1fr_auto] gap-3 px-2 py-[9px]"
             }`}
-            style={{ background: r.me ? "rgba(255,46,136,.14)" : "transparent" }}
+            style={{
+              background: r.me ? "rgba(255,46,136,.14)" : "transparent",
+            }}
           >
             <span
               className={`font-mono ${short ? "text-[13px]" : "text-sm"}`}
@@ -76,8 +86,16 @@ export function GameLeaderboard({ short = false }: { short?: boolean }) {
             >
               {r.me ? `#${r.pos}` : pad2(i + 1)}
             </span>
-            <span className={`font-medium ${short ? "text-sm" : "text-[15px]"}`}>{r.name}</span>
-            <span className={`font-mono text-gold ${short ? "text-sm" : "text-[15px]"}`}>{r.score}</span>
+            <span
+              className={`font-medium ${short ? "text-sm" : "text-[15px]"}`}
+            >
+              {r.name}
+            </span>
+            <span
+              className={`font-mono text-gold ${short ? "text-sm" : "text-[15px]"}`}
+            >
+              {r.score}
+            </span>
           </li>
         ))}
       </ol>
