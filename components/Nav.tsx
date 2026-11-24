@@ -34,7 +34,7 @@ export function Logo({ size = "md" }: { size?: "sm" | "md" }) {
         M
       </span>
       <span
-        className={`font-pixel text-text lm-logo-glow ${sm ? "text-[15px]" : "text-xl tracking-[1px]"}`}
+        className={`lm-logo-glow font-pixel text-text ${sm ? "text-[15px]" : "text-xl tracking-[1px]"}`}
       >
         LA MAQUINITA
       </span>

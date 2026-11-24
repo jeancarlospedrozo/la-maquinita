@@ -1,12 +1,7 @@
 // Datos de ejemplo del portal. Reemplazar por la API / base de datos real.
 
 export type Category =
-  | "Shooter"
-  | "Plataformas"
-  | "Puzzle"
-  | "Carreras"
-  | "Lucha"
-  | "Clásicos";
+  "Shooter" | "Plataformas" | "Puzzle" | "Carreras" | "Lucha" | "Clásicos";
 
 export type Difficulty = "Fácil" | "Media" | "Difícil";
 export type Players = "1 jugador" | "2 jugadores" | "4 jugadores";
@@ -267,9 +262,21 @@ export const featuredGame = games[0];
 // TODO: sustituir por los endpoints de "populares" y "novedades".
 const pick = (slugs: string[]) => slugs.map((s) => getGame(s)!);
 
-export const popularGames = pick(["cometa-loca", "salto-pixel", "bloques-bravos", "turbo-taco"]);
+export const popularGames = pick([
+  "cometa-loca",
+  "salto-pixel",
+  "bloques-bravos",
+  "turbo-taco",
+]);
 
-export const newReleases = pick(["puno-neon", "ladrillazo", "rana-turbo", "galaxia-chicle", "mina-magica", "dino-derrape"]);
+export const newReleases = pick([
+  "puno-neon",
+  "ladrillazo",
+  "rana-turbo",
+  "galaxia-chicle",
+  "mina-magica",
+  "dino-derrape",
+]);
 
 export const categories: { name: Category; color: string }[] = [
   { name: "Shooter", color: "#FF2E88" },
@@ -293,7 +300,11 @@ export const categoryCounts: Record<Category, number> = {
 export const CATALOG_TOTAL = 148;
 
 export const difficulties: Difficulty[] = ["Fácil", "Media", "Difícil"];
-export const playerOptions: Players[] = ["1 jugador", "2 jugadores", "4 jugadores"];
+export const playerOptions: Players[] = [
+  "1 jugador",
+  "2 jugadores",
+  "4 jugadores",
+];
 export const durations: Duration[] = ["< 3 min", "3–10 min", "> 10 min"];
 
 /** Color de la posición en rankings: oro, cian, rosa; resto apagado. */
@@ -315,27 +326,113 @@ export type RankRow = {
 };
 
 export const top5: RankRow[] = [
-  { initials: "KAI", name: "kaiser_88", game: "Cometa Loca", score: "1.284.550" },
+  {
+    initials: "KAI",
+    name: "kaiser_88",
+    game: "Cometa Loca",
+    score: "1.284.550",
+  },
   { initials: "LUZ", name: "luzbel.exe", game: "Ladrillazo", score: "742.110" },
   { initials: "MOX", name: "moxie", game: "Bloques Bravos", score: "456.900" },
   { initials: "ZEP", name: "zeppo_77", game: "Puño Neón", score: "312.000" },
-  { initials: "NIA", name: "nia.pix", game: "Galaxia Chicle", score: "204.880" },
+  {
+    initials: "NIA",
+    name: "nia.pix",
+    game: "Galaxia Chicle",
+    score: "204.880",
+  },
 ];
 
 export const podium = [
-  { pos: 2, initials: "LUZ", name: "luzbel.exe", game: "Ladrillazo", score: "742.110", short: "742K", color: "#00E5FF", glow: "rgba(0,229,255,.35)" },
-  { pos: 1, initials: "KAI", name: "kaiser_88", game: "Cometa Loca", score: "1.284.550", short: "1,28M", color: "#FFD60A", glow: "rgba(255,214,10,.35)" },
-  { pos: 3, initials: "MOX", name: "moxie", game: "Bloques Bravos", score: "456.900", short: "457K", color: "#FF2E88", glow: "rgba(255,46,136,.35)" },
+  {
+    pos: 2,
+    initials: "LUZ",
+    name: "luzbel.exe",
+    game: "Ladrillazo",
+    score: "742.110",
+    short: "742K",
+    color: "#00E5FF",
+    glow: "rgba(0,229,255,.35)",
+  },
+  {
+    pos: 1,
+    initials: "KAI",
+    name: "kaiser_88",
+    game: "Cometa Loca",
+    score: "1.284.550",
+    short: "1,28M",
+    color: "#FFD60A",
+    glow: "rgba(255,214,10,.35)",
+  },
+  {
+    pos: 3,
+    initials: "MOX",
+    name: "moxie",
+    game: "Bloques Bravos",
+    score: "456.900",
+    short: "457K",
+    color: "#FF2E88",
+    glow: "rgba(255,46,136,.35)",
+  },
 ];
 
 export const rankingTable: RankRow[] = [
-  { initials: "ZEP", name: "zeppo_77", game: "Puño Neón", score: "312.000", level: 42, date: "08 nov" },
-  { initials: "NIA", name: "nia.pix", game: "Galaxia Chicle", score: "204.880", level: 38, date: "08 nov" },
-  { initials: "VEC", name: "vector_v", game: "Cometa Loca", score: "198.420", level: 51, date: "07 nov" },
-  { initials: "TUK", name: "tuki", game: "Salto Pixel", score: "98.420", level: 27, date: "07 nov" },
-  { initials: "RAY", name: "raydo", game: "Fantasmín", score: "133.400", level: 33, date: "06 nov" },
-  { initials: "QRK", name: "quark", game: "Turbo Taco", score: "02:14.37", level: 19, date: "06 nov" },
-  { initials: "MON", name: "m0nch1", game: "Mina Mágica", score: "77.150", level: 22, date: "05 nov" },
+  {
+    initials: "ZEP",
+    name: "zeppo_77",
+    game: "Puño Neón",
+    score: "312.000",
+    level: 42,
+    date: "08 nov",
+  },
+  {
+    initials: "NIA",
+    name: "nia.pix",
+    game: "Galaxia Chicle",
+    score: "204.880",
+    level: 38,
+    date: "08 nov",
+  },
+  {
+    initials: "VEC",
+    name: "vector_v",
+    game: "Cometa Loca",
+    score: "198.420",
+    level: 51,
+    date: "07 nov",
+  },
+  {
+    initials: "TUK",
+    name: "tuki",
+    game: "Salto Pixel",
+    score: "98.420",
+    level: 27,
+    date: "07 nov",
+  },
+  {
+    initials: "RAY",
+    name: "raydo",
+    game: "Fantasmín",
+    score: "133.400",
+    level: 33,
+    date: "06 nov",
+  },
+  {
+    initials: "QRK",
+    name: "quark",
+    game: "Turbo Taco",
+    score: "02:14.37",
+    level: 19,
+    date: "06 nov",
+  },
+  {
+    initials: "MON",
+    name: "m0nch1",
+    game: "Mina Mágica",
+    score: "77.150",
+    level: 22,
+    date: "05 nov",
+  },
 ];
 
 export const currentPlayer = {
@@ -360,9 +457,24 @@ export const gameLeaderboard = [
 ];
 
 export const achievements = [
-  { icon: "★", name: "Primer despegue", desc: "Completa la ola 1", locked: false },
-  { icon: "x10", name: "Combo loco", desc: "Encadena 10 fragmentos", locked: false },
-  { icon: "◆", name: "Intocable", desc: "Ola 5 sin perder vidas", locked: true },
+  {
+    icon: "★",
+    name: "Primer despegue",
+    desc: "Completa la ola 1",
+    locked: false,
+  },
+  {
+    icon: "x10",
+    name: "Combo loco",
+    desc: "Encadena 10 fragmentos",
+    locked: false,
+  },
+  {
+    icon: "◆",
+    name: "Intocable",
+    desc: "Ola 5 sin perder vidas",
+    locked: true,
+  },
   { icon: "∞", name: "Leyenda", desc: "Supera 1.000.000 pts", locked: true },
 ];
 

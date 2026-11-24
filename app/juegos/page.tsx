@@ -17,11 +17,21 @@ export default function JuegosPage({ searchParams }: PageProps<"/juegos">) {
   );
 }
 
-async function CatalogFromParams({ searchParams }: Pick<PageProps<"/juegos">, "searchParams">) {
+async function CatalogFromParams({
+  searchParams,
+}: Pick<PageProps<"/juegos">, "searchParams">) {
   const sp = await searchParams;
   const q = typeof sp.q === "string" ? sp.q : "";
   const cat = typeof sp.cat === "string" ? sp.cat : undefined;
-  const initialCategory = categories.some((c) => c.name === cat) ? (cat as Category) : undefined;
+  const initialCategory = categories.some((c) => c.name === cat)
+    ? (cat as Category)
+    : undefined;
   // `key` reinicia el estado del cliente cuando cambia la URL (p. ej. buscar desde la barra).
-  return <Catalog key={`${q}|${cat ?? ""}`} initialQuery={q} initialCategory={initialCategory} />;
+  return (
+    <Catalog
+      key={`${q}|${cat ?? ""}`}
+      initialQuery={q}
+      initialCategory={initialCategory}
+    />
+  );
 }

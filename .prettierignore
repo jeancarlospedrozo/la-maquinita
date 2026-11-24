@@ -1,0 +1,8 @@
+.next
+out
+build
+node_modules
+.playwright-mcp
+package-lock.json
+next-env.d.ts
+AGENTS.md

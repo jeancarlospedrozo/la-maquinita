@@ -1,10 +1,16 @@
 /** Estado de carga del catálogo (M2 · "Estado de carga"). */
 export function CatalogSkeleton() {
   return (
-    <div className="flex flex-col gap-4 p-5 lg:p-12" aria-busy="true" aria-label="Cargando juegos">
+    <div
+      className="flex flex-col gap-4 p-5 lg:p-12"
+      aria-busy="true"
+      aria-label="Cargando juegos"
+    >
       <div className="h-8 w-48 rounded-sm bg-panel lg:h-11" />
       <div className="h-12 rounded bg-panel lg:h-14" />
-      <span className="mt-4 font-mono text-[11px] tracking-[1.5px] text-muted">CARGANDO…</span>
+      <span className="mt-4 font-mono text-[11px] tracking-[1.5px] text-muted">
+        CARGANDO…
+      </span>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-6">
         {Array.from({ length: 8 }, (_, i) => (
           <SkeletonCard key={i} />
