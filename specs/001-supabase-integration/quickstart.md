@@ -11,21 +11,21 @@ Run from the repository root. Contracts: [environment](./contracts/environment.m
 
 ## Scenario 1 — Remote connection (US1, SC-001)
 
-1. `cp .env.template .env` and fill `NEXT_PUBLIC_SUPABASE_URL` and
+1. `cp .env.template .env.local` and fill `NEXT_PUBLIC_SUPABASE_URL` and
    `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from the Supabase dashboard (Project Settings → API Keys).
 2. `npm run db:check` → prints `✓ Conectado a Supabase (...)`, exit code 0.
 
 ## Scenario 2 — Failure messages (US2-3, edge cases)
 
-- Remove `NEXT_PUBLIC_SUPABASE_URL` from `.env` → `db:check` exits 2 naming the variable.
+- Remove `NEXT_PUBLIC_SUPABASE_URL` from `.env.local` → `db:check` exits 2 naming the variable.
 - Set the URL to `https://invalid.example.invalid` → exits 3 ("No se puede alcanzar").
 - Set the key to `sb_publishable_wrong` → exits 4 ("rechazó la clave").
 
 ## Scenario 3 — Portal unchanged, with and without settings (US1-2, FR-006, SC-002, SC-005)
 
-1. With `.env` filled: `npm run build` succeeds; the route summary shows the same static /
+1. With `.env.local` filled: `npm run build` succeeds; the route summary shows the same static /
    partially prerendered routes as on `main`.
-2. Rename `.env` away and run `npm run build` again → still succeeds.
+2. Move `.env.local` away and run `npm run build` again → still succeeds.
 3. `npm run dev`; compare home, `/juegos`, a detail page, `/juegos/<slug>/jugar` and `/rankings`
    at 390 px and 1440 px against `main` → identical.
 
@@ -40,7 +40,7 @@ Run from the repository root. Contracts: [environment](./contracts/environment.m
 
 1. `npm run db:start` → Docker containers start; `npm run db:status` prints the local URL and
    publishable key.
-2. Point `.env` at the local stack (see environment contract) → `npm run db:check` exit 0.
+2. Point `.env.local` at the local stack (see environment contract) → `npm run db:check` exit 0.
 3. `npm run db:reset` → applies migrations from scratch (none yet) without error.
 4. `npm run db:types` → `git diff --exit-code lib/supabase/database.types.ts` is clean.
 5. `npm run db:stop`.

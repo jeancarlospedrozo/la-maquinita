@@ -1,6 +1,6 @@
 # Contract: Environment variables
 
-Documented in `.env.template` (committed, placeholders only). Real values live in `.env`
+Documented in `.env.template` (committed, placeholders only). Real values live in `.env.local`
 (git-ignored). The hosting environment needs the same variables.
 
 | Variable                               | Required           | Exposure         | Consumer                    | Placeholder                            |

@@ -8,12 +8,23 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/db-check.ts",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:status": "supabase status",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript > lib/supabase/database.types.ts && prettier --write --log-level warn lib/supabase/database.types.ts",
+    "db:link": "sh -c 'set -a; [ -f .env ] && . ./.env; [ -f .env.local ] && . ./.env.local; set +a; supabase link --project-ref \"$SUPABASE_PROJECT_REF\"'",
+    "db:push": "sh -c 'set -a; [ -f .env ] && . ./.env; [ -f .env.local ] && . ./.env.local; set +a; supabase db push --remote=\"$SUPABASE_PROJECT_REF\" --password \"$SUPABASE_DB_PASSWORD\" \"$@\"' --"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.2",
     "next": "16.4.5",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -24,6 +35,7 @@
     "eslint-config-next": "16.4.5",
     "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "supabase": "^3.3.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

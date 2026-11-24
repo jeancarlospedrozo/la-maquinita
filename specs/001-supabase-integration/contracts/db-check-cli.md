@@ -1,6 +1,6 @@
 # Contract: `npm run db:check`
 
-Runs `node --env-file-if-exists=.env scripts/db-check.ts`. No arguments. Reads settings through
+Runs `node scripts/db-check.ts`, which loads `.env.local` and then `.env` (same precedence as Next.js). No arguments. Reads settings through
 `lib/supabase/config.ts` (same rules as the portal), then requests
 `GET {NEXT_PUBLIC_SUPABASE_URL}/auth/v1/health` with header `apikey: <publishable key>` and a
 5-second timeout.

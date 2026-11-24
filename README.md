@@ -20,6 +20,15 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Supabase
+
+The portal connects to Supabase, but it works without it: if the variables are missing, the portal runs on the example data in `lib/data.ts`.
+
+1. `cp .env.template .env.local` and fill in the URL and publishable key (Supabase → Project Settings → API Keys).
+2. `npm run db:check` should print `✓ Conectado a Supabase (…)`.
+
+Changing the database also requires Docker (`npm run db:start`) and, for pushing to the remote project, `npx supabase login`. The full workflow, including migrations, type generation and RLS rules, is in [CLAUDE.md](./CLAUDE.md#supabase).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
