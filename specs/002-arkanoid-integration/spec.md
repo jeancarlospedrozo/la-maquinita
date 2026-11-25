@@ -30,6 +30,15 @@ later features.
 - Q: ¿Con qué estilo se muestran los mensajes intermedios ("lanzar", "Nivel N completado")?
   → A: Como avisos con el estilo del portal (fuente pixel, colores neón) sobre el juego; el
   juego deja de dibujar sus propios textos.
+- Q: Si el jugador sale de pantalla completa con Escape durante la partida, ¿qué pasa? → A: El
+  navegador usa Escape para salir de pantalla completa antes de que llegue al juego, así que
+  salir de pantalla completa mientras se juega pausa la partida.
+- Q: En táctil, ¿cómo se distingue un toque (lanzar) de un arrastre (mover)? → A: Es toque solo
+  si el dedo se movió menos de 10 px del campo de juego y estuvo apoyado menos de 300 ms; un
+  arrastre nunca lanza la pelota.
+- Q: ¿Qué muestra la pantalla si los gráficos no cargan? → A: "NO SE PUDO CARGAR EL JUEGO", el
+  texto "Revisa tu conexión e inténtalo de nuevo." y los botones "Reintentar" (vuelve a cargar)
+  y "Salir" (al detalle del juego).
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -156,8 +165,8 @@ ball and clear at least one brick without a keyboard or mouse.
 - The player leaves the browser tab or window mid-game: the game pauses automatically and any
   held movement key is released, so the paddle does not keep sliding and the ball is not lost
   while the player is away.
-- The sprite sheet or a sound fails to load: the game area shows a clear Spanish error message
-  with a retry option for missing graphics; missing sounds never block play.
+- The game's graphics fail to load: the error screen of FR-019 is shown. A sound that fails to
+  load never blocks play and shows no error.
 - The browser blocks sound until the first interaction: the game still runs, silently, and sound
   starts working after the first click or key press, with no error shown.
 - The player presses Space while the "PRESS START" overlay is shown: it starts the game once; it
@@ -205,9 +214,12 @@ ball and clear at least one brick without a keyboard or mouse.
   MUST always match the game's current values. The game area MUST NOT show a second, competing
   scoreboard.
 - **FR-008**: Pause (button, P or Escape) MUST freeze the game completely and resume it from the
-  same position; the game MUST pause automatically when the page loses focus or becomes hidden.
+  same position; the game MUST pause automatically when the page loses focus or becomes hidden,
+  and when the player leaves full screen during play (in full screen the browser uses Escape to
+  exit full screen, so that Escape pauses the game this way). Resuming is only through the
+  PAUSA overlay's "Continuar".
 - **FR-009**: The "Sonido" toggle MUST mute and unmute all of the game's sounds.
-- **FR-010**: "Reiniciar" and "Reintentar" MUST start a fresh game at level 1 with 3 lives and
+- **FR-010**: "Reiniciar" and the end screen's "Reintentar" MUST start a fresh game at level 1 with 3 lives and
   0 points.
 - **FR-011**: The playfield MUST scale to fit the available game area (desktop, mobile and full
   screen) while keeping its proportions and crisp pixel art.
@@ -235,7 +247,16 @@ ball and clear at least one brick without a keyboard or mouse.
   (move to aim, click to launch/continue); pressing these keys while playing MUST NOT scroll the
   page.
 - **FR-018**: On touch devices the game MUST be playable with the on-screen pad (◀ ▶ to move,
-  "A" to launch/continue) and by dragging and tapping on the game area.
+  "A" to launch/continue) and by dragging and tapping on the game area. A touch counts as a tap
+  (launch/continue) only if the finger moved less than 10 px of the playfield (800 px wide) and
+  stayed down less than 300 ms; a drag only moves the paddle and never launches the ball.
+
+#### Loading errors
+
+- **FR-019**: If the game's graphics cannot be loaded, the game area MUST show an error screen
+  with the title "NO SE PUDO CARGAR EL JUEGO", the text "Revisa tu conexión e inténtalo de
+  nuevo.", a "Reintentar" button that loads the graphics again (back to the loading screen) and
+  a "Salir" link to the game's detail page.
 
 ### Key Entities
 
