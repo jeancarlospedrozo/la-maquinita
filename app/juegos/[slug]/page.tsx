@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from "react";
+import { type CSSProperties, Fragment, type ReactNode, Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -6,6 +6,7 @@ import {
   FavShareButtons,
   GameLeaderboard,
 } from "@/components/detail/DetailClient";
+import { DetailSkeleton } from "@/components/detail/DetailSkeleton";
 import { SiteShell } from "@/components/SiteShell";
 import { BadgeTag, Chip, Placeholder } from "@/components/ui";
 import {
@@ -16,6 +17,7 @@ import {
   getControls,
   getGame,
 } from "@/lib/data";
+import { titleEm } from "@/lib/titleFit";
 
 export function generateStaticParams() {
   return games.map((g) => ({ slug: g.slug }));
@@ -28,9 +30,22 @@ export async function generateMetadata({
   return game ? { title: game.name, description: game.tagline } : {};
 }
 
-export default async function GameDetailPage({
+export default function GameDetailPage({
   params,
 }: PageProps<"/juegos/[slug]">) {
+  // `params` se lee dentro de <Suspense>: al navegar, el esqueleto sale al instante.
+  return (
+    <SiteShell active="juegos">
+      <Suspense fallback={<DetailSkeleton />}>
+        <GameDetail params={params} />
+      </Suspense>
+    </SiteShell>
+  );
+}
+
+async function GameDetail({
+  params,
+}: Pick<PageProps<"/juegos/[slug]">, "params">) {
   const { slug } = await params;
   const game = getGame(slug);
   if (!game) notFound();
@@ -45,7 +60,7 @@ export default async function GameDetailPage({
   ].slice(0, 4);
 
   return (
-    <SiteShell active="juegos">
+    <>
       <nav
         aria-label="Migas de pan"
         className="hidden gap-2.5 px-12 pt-6 text-sm text-muted lg:flex"
@@ -89,9 +104,17 @@ export default async function GameDetailPage({
               <Chip>Dificultad {game.difficulty.toLowerCase()}</Chip>
             </span>
           </div>
-          <h1 className="lm-neon-pink font-pixel text-4xl leading-none uppercase lg:text-[56px]">
-            {game.name}
-          </h1>
+          {/* El contenedor reserva el ancho de la palabra más larga a 56 px (como antes),
+              pero nunca más del 23 % de la ventana (la columna del diseño a 1440 px);
+              si no cabe, la letra se reduce lo justo. Ver research R6. */}
+          <div
+            className="@container lg:min-w-[min(calc(var(--title-em)*56px),23vw)]"
+            style={{ "--title-em": titleEm(game.name) } as CSSProperties}
+          >
+            <h1 className="lm-neon-pink font-pixel text-[min(36px,calc(100cqi/var(--title-em)))] leading-none uppercase lg:text-[min(56px,calc(100cqi/var(--title-em)))]">
+              {game.name}
+            </h1>
+          </div>
           <dl className="flex gap-6 font-mono lg:gap-8">
             <Stat value={`★ ${game.rating}`} label={`${game.votes} votos`} />
             <Stat value={game.plays} label="partidas" />
@@ -225,7 +248,7 @@ export default async function GameDetailPage({
           ))}
         </div>
       </section>
-    </SiteShell>
+    </>
   );
 }
 
