@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { GameScreen } from "@/components/game/GameScreen";
-import { currentPlayer, games, getGame, top5 } from "@/lib/data";
+import { currentPlayer, games, getControls, getGame, top5 } from "@/lib/data";
 
 export function generateStaticParams() {
   return games.map((g) => ({ slug: g.slug }));
@@ -28,8 +28,10 @@ export default async function PlayPage({
       slug={game.slug}
       name={game.name}
       globalRecord={game.record}
-      globalHolder={holder}
-      personalBest={currentPlayer.best}
+      globalHolder={game.recordHolder ?? holder}
+      personalBest={game.personalBest ?? currentPlayer.best}
+      engine={game.engine}
+      controls={getControls(game)}
     />
   );
 }

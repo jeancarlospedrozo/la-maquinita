@@ -42,7 +42,9 @@ A project hook (`.claude/settings.json` → `.claude/hooks/format-and-lint.mjs`)
 - `lib/useFavorites.ts` is a `localStorage`-backed favorites store shared through `useSyncExternalStore`.
 - `components/SiteShell.tsx` wraps every portal page with the desktop nav, mobile top bar, footer, and the fixed mobile tab bar. The play screen (`/juegos/[slug]/jugar`) deliberately renders without it ("modo foco").
 - `components/ui.tsx` holds server-safe shared primitives (`GameCard`, `Placeholder`, `BadgeTag`, `Blink`, `SegmentedTabs`, …). Interactive pieces live in `"use client"` files grouped per screen: `components/catalog`, `detail`, `game`, `rankings`.
-- `components/game/GameScreen.tsx` is a state machine: `loading → start → playing ⇄ pause → over | record`. The canvas area is an empty slot for a real game engine. Until one exists, a demo mode simulates score and lives, so every state can be reached.
+- `components/game/GameScreen.tsx` is a state machine: `loading → start → playing ⇄ pause → over | record` (plus `error` when a real engine's assets fail to load). Games with `engine` set in `lib/data.ts` mount a real engine in the canvas area; every other game keeps the demo mode, which simulates score and lives so every state can be reached.
+- Real engines live in `lib/games/<slug>/`: framework-free TypeScript with no import-time side effects, created inside an effect and released with `destroy()` on unmount. They are registered in `components/game/engines.ts` (`next/dynamic` with `ssr: false`), follow the contract in `specs/002-arkanoid-integration/contracts/engine.md`, and load their assets from `public/games/<slug>/`. The engine draws no text: notices and end screens are portal overlays. Ladrillazo is the first one (ported from `references/arkanoid/`, which stays untouched and is ignored by ESLint and Prettier).
+- Per-game copy for controls, the loading tip, the touch pad, the personal best, the record holder and the detail-page leaderboard comes from optional `Game` fields (`controls`, `personalBest`, `recordHolder`, `leaderboard`), with the shared defaults as fallback.
 
 ## Styling
 

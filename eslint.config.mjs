@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Juegos originales de referencia: se copian tal cual, no se editan.
+    "references/**",
   ]),
 ]);
 

@@ -82,17 +82,19 @@ Existing `State` gains one value and the end screen gains one flag:
 
 ### `GameControls` (new type)
 
-| Field     | Type                                  | Rules                                                |
-| --------- | ------------------------------------- | ---------------------------------------------------- |
-| `desktop` | `{ keys: string[]; label: string }[]` | Rows of the "CONTROLES" box (play and detail pages). |
-| `touch`   | `string`                              | Sentence for the mobile detail page.                 |
-| `tip`     | `string`                              | Loading-screen tip.                                  |
-| `pad`     | `{ vertical: boolean; b: boolean }`   | Which touch-pad buttons are shown (▲▼, "B").         |
+| Field     | Type                                  | Rules                                                                                                                                                          |
+| --------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `desktop` | `{ keys: string[]; label: string }[]` | Rows of the detail page's "CONTROLES" panel.                                                                                                                   |
+| `hud`     | `string[]`                            | Short lines of the play screen's "CONTROLES" box (added during implementation: today the two screens use different texts, and demo games must stay identical). |
+| `touch`   | `string`                              | Sentence for the mobile detail page.                                                                                                                           |
+| `tip`     | `string`                              | Loading-screen tip.                                                                                                                                            |
+| `pad`     | `{ vertical: boolean; b: boolean }`   | Which touch-pad buttons are shown (▲▼, "B").                                                                                                                   |
 
 Ladrillazo values:
 
 - `desktop` rows, in order: `["←","→"]` "Mover la paleta"; `["A","D"]` "También mueven la
   paleta"; `["ESPACIO"]` "Lanzar · continuar"; `["P"]` "Pausa"; `[]` "También con el ratón".
+- `hud`: "← → · A D mover", "RATÓN mover · CLIC lanzar", "ESPACIO lanzar · P pausa".
 - `touch`: "Táctil: ◀ ▶ o arrastra para mover, A o toca para lanzar."
 - `tip`: "Consejo: el borde de la paleta desvía más la pelota."
 - `pad`: `{ vertical: false, b: false }`.

@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { SegmentedTabs } from "@/components/ui";
-import { gameLeaderboard, pad2, positionColor } from "@/lib/data";
+import {
+  gameLeaderboard,
+  type LeaderboardRow,
+  pad2,
+  positionColor,
+} from "@/lib/data";
 import { useFavorites } from "@/lib/useFavorites";
 
 export function FavShareButtons({
@@ -53,9 +58,16 @@ export function FavShareButtons({
 
 const PERIODS = ["Hoy", "Semana", "Histórico"] as const;
 
-export function GameLeaderboard({ short = false }: { short?: boolean }) {
+export function GameLeaderboard({
+  short = false,
+  rows: allRows = gameLeaderboard,
+}: {
+  short?: boolean;
+  /** Clasificación del juego; por defecto, la compartida. */
+  rows?: LeaderboardRow[];
+}) {
   const [period, setPeriod] = useState<(typeof PERIODS)[number]>("Semana");
-  const rows = short ? gameLeaderboard.slice(0, 5) : gameLeaderboard;
+  const rows = short ? allRows.slice(0, 5) : allRows;
 
   return (
     <div className="flex flex-col gap-3">

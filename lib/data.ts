@@ -27,7 +27,52 @@ export type Game = {
   /** Versión corta del tagline para móvil. */
   taglineShort?: string;
   description: string;
+  /** Motor real del juego. Sin él, la pantalla de juego usa el modo demo. */
+  engine?: "ladrillazo";
+  /** Récord personal de este juego. Por defecto, `currentPlayer.best`. */
+  personalBest?: string;
+  /** Quién tiene el récord global. Por defecto se busca en `top5`. */
+  recordHolder?: string;
+  /** Textos de controles. Por defecto, `defaultControls`. */
+  controls?: GameControls;
+  /** Clasificación de la ficha del juego. Por defecto, `gameLeaderboard`. */
+  leaderboard?: LeaderboardRow[];
 };
+
+export type LeaderboardRow = {
+  name: string;
+  score: string;
+  me?: boolean;
+  pos?: number;
+};
+
+export type GameControls = {
+  /** Filas del recuadro "CONTROLES" (pantalla de juego y ficha). */
+  desktop: { keys: string[]; label: string }[];
+  /** Líneas cortas del recuadro "CONTROLES" de la pantalla de juego. */
+  hud: string[];
+  /** Frase de controles táctiles de la ficha en móvil. */
+  touch: string;
+  /** Consejo de la pantalla de carga. */
+  tip: string;
+  /** Botones visibles de la cruceta táctil (▲▼ y "B"). */
+  pad: { vertical: boolean; b: boolean };
+};
+
+// TODO: los controles vendrán de la API junto con el resto del catálogo.
+export const defaultControls: GameControls = {
+  desktop: [
+    { keys: ["←", "↑", "↓", "→"], label: "Mover la nave" },
+    { keys: ["ESPACIO"], label: "Disparar" },
+    { keys: ["X", "P"], label: "Escudo · Pausa" },
+  ],
+  hud: ["← ↑ → ↓ mover", "ESPACIO disparar", "X escudo · P pausa"],
+  touch: "Táctil: D-pad para mover, A disparar, B escudo.",
+  tip: "Consejo: el escudo (X) se recarga recogiendo chatarra.",
+  pad: { vertical: true, b: true },
+};
+
+export const getControls = (game: Game) => game.controls ?? defaultControls;
 
 const HOT: Badge = { label: "HOT", color: "#FF2E88" };
 const NEW: Badge = { label: "NUEVO", color: "#39FF14" };
@@ -128,7 +173,11 @@ export const games: Game[] = [
     slug: "ladrillazo",
     name: "Ladrillazo",
     category: "Clásicos",
-    record: "742.110",
+    // TODO: récord, récord personal y clasificación vendrán de la API de rankings.
+    record: "1.380",
+    recordHolder: "luzbel.exe",
+    personalBest: "640",
+    engine: "ladrillazo",
     badge: REC,
     difficulty: "Media",
     players: "1 jugador",
@@ -140,7 +189,34 @@ export const games: Game[] = [
     releasedAt: "2025-08-05",
     tagline: "Rompe el muro, salva la pelota.",
     description:
-      "El clásico de paleta y ladrillos con power-ups modernos: bola múltiple, láser y ladrillos que contraatacan.",
+      "El clásico de paleta y ladrillos en tres niveles: el muro, la pirámide y el ajedrez. En cada nivel la pelota va más rápido, y solo tienes 3 vidas para romperlo todo.",
+    controls: {
+      desktop: [
+        { keys: ["←", "→"], label: "Mover la paleta" },
+        { keys: ["A", "D"], label: "También mueven la paleta" },
+        { keys: ["ESPACIO"], label: "Lanzar · continuar" },
+        { keys: ["P"], label: "Pausa" },
+        { keys: [], label: "También con el ratón" },
+      ],
+      hud: [
+        "← → · A D mover",
+        "RATÓN mover · CLIC lanzar",
+        "ESPACIO lanzar · P pausa",
+      ],
+      touch: "Táctil: ◀ ▶ o arrastra para mover, A o toca para lanzar.",
+      tip: "Consejo: el borde de la paleta desvía más la pelota.",
+      pad: { vertical: false, b: false },
+    },
+    leaderboard: [
+      { name: "luzbel.exe", score: "1.380" },
+      { name: "nia.pix", score: "1.290" },
+      { name: "vector_v", score: "1.170" },
+      { name: "tuki", score: "1.050" },
+      { name: "raydo", score: "960" },
+      { name: "pixel_pao (tú)", score: "640", me: true, pos: 38 },
+      { name: "quark", score: "610" },
+      { name: "m0nch1", score: "580" },
+    ],
   },
   {
     slug: "rana-turbo",
@@ -332,7 +408,7 @@ export const top5: RankRow[] = [
     game: "Cometa Loca",
     score: "1.284.550",
   },
-  { initials: "LUZ", name: "luzbel.exe", game: "Ladrillazo", score: "742.110" },
+  { initials: "LUZ", name: "luzbel.exe", game: "Robo Rumba", score: "742.110" },
   { initials: "MOX", name: "moxie", game: "Bloques Bravos", score: "456.900" },
   { initials: "ZEP", name: "zeppo_77", game: "Puño Neón", score: "312.000" },
   {
@@ -348,7 +424,7 @@ export const podium = [
     pos: 2,
     initials: "LUZ",
     name: "luzbel.exe",
-    game: "Ladrillazo",
+    game: "Robo Rumba",
     score: "742.110",
     short: "742K",
     color: "#00E5FF",
@@ -445,7 +521,7 @@ export const currentPlayer = {
   best: "84.120",
 };
 
-export const gameLeaderboard = [
+export const gameLeaderboard: LeaderboardRow[] = [
   { name: "kaiser_88", score: "1.284.550" },
   { name: "nia.pix", score: "1.102.300" },
   { name: "vector_v", score: "988.420" },

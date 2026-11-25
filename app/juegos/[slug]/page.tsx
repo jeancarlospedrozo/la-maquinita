@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,7 +8,14 @@ import {
 } from "@/components/detail/DetailClient";
 import { SiteShell } from "@/components/SiteShell";
 import { BadgeTag, Chip, Placeholder } from "@/components/ui";
-import { achievements, currentPlayer, games, getGame } from "@/lib/data";
+import {
+  achievements,
+  currentPlayer,
+  gameLeaderboard,
+  games,
+  getControls,
+  getGame,
+} from "@/lib/data";
 
 export function generateStaticParams() {
   return games.map((g) => ({ slug: g.slug }));
@@ -27,6 +34,8 @@ export default async function GameDetailPage({
   const { slug } = await params;
   const game = getGame(slug);
   if (!game) notFound();
+  const controls = getControls(game);
+  const leaderboard = game.leaderboard ?? gameLeaderboard;
 
   const similar = [
     ...games.filter(
@@ -86,7 +95,11 @@ export default async function GameDetailPage({
           <dl className="flex gap-6 font-mono lg:gap-8">
             <Stat value={`★ ${game.rating}`} label={`${game.votes} votos`} />
             <Stat value={game.plays} label="partidas" />
-            <Stat value={currentPlayer.best} label="tu mejor" gold />
+            <Stat
+              value={game.personalBest ?? currentPlayer.best}
+              label="tu mejor"
+              gold
+            />
           </dl>
           <Link
             href={`/juegos/${game.slug}/jugar`}
@@ -102,34 +115,31 @@ export default async function GameDetailPage({
               CONTROLES
             </span>
             <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 text-sm">
-              <div className="flex gap-1">
-                {["←", "↑", "↓", "→"].map((k) => (
-                  <Key key={k} color="#00E5FF">
-                    {k}
-                  </Key>
-                ))}
-              </div>
-              <span>Mover la nave</span>
-              <Key color="#FF2E88" wide>
-                ESPACIO
-              </Key>
-              <span>Disparar</span>
-              <div className="flex gap-1">
-                <Key color="#FFD60A">X</Key>
-                <Key color="#A59FC7">P</Key>
-              </div>
-              <span>Escudo · Pausa</span>
+              {controls.desktop.map(({ keys, label }) => (
+                <Fragment key={label}>
+                  {keys.length === 1 ? (
+                    <KeyCap k={keys[0]} />
+                  ) : (
+                    <div className="flex gap-1">
+                      {keys.map((k) => (
+                        <KeyCap key={k} k={k} />
+                      ))}
+                    </div>
+                  )}
+                  <span>{label}</span>
+                </Fragment>
+              ))}
             </div>
           </div>
           <div className="flex items-center gap-3.5 rounded-md border border-line bg-panel p-4 lg:hidden">
             <DPadIcon />
             <span className="text-sm leading-[1.4] text-muted">
-              Táctil: D-pad para mover, A disparar, B escudo.
+              {controls.touch}
             </span>
           </div>
 
           <div className="lg:hidden">
-            <GameLeaderboard short />
+            <GameLeaderboard short rows={leaderboard} />
           </div>
         </div>
       </div>
@@ -183,7 +193,7 @@ export default async function GameDetailPage({
           </div>
         </div>
         <div className="self-start rounded-md border border-line bg-panel p-6">
-          <GameLeaderboard />
+          <GameLeaderboard rows={leaderboard} />
         </div>
       </div>
 
@@ -238,6 +248,21 @@ function Stat({
         </span>
       </dd>
     </div>
+  );
+}
+
+const KEY_COLORS: Record<string, string> = {
+  ESPACIO: "#FF2E88",
+  X: "#FFD60A",
+  P: "#A59FC7",
+};
+
+/** Tecla del panel de controles; las palabras (ESPACIO) usan la tecla ancha. */
+function KeyCap({ k }: { k: string }) {
+  return (
+    <Key color={KEY_COLORS[k] ?? "#00E5FF"} wide={k.length > 1}>
+      {k}
+    </Key>
   );
 }
 
