@@ -7,3 +7,12 @@ package-lock.json
 next-env.d.ts
 AGENTS.md
 references
+
+# Generados por Spec Kit: `specify` los reescribe al actualizarse
+.claude/skills/speckit-*
+.specify/templates
+.specify/workflows
+.specify/integration.json
+
+# Configuración personal de Claude Code (fuera de git)
+.claude/settings.local.json
