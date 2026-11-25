@@ -9,17 +9,25 @@ import {
   type ReactNode,
 } from "react";
 import { Blink } from "@/components/ui";
+import type { GameControls } from "@/lib/data";
+import type {
+  EngineEvents,
+  EngineHandle,
+  EnginePhase,
+} from "@/lib/games/ladrillazo";
+import { engines, type EngineKey } from "./engines";
 
 /**
  * Pantalla de juego (modo foco). Gestiona los estados del diseño:
  * carga → inicio → jugando ⇄ pausa → game over | nuevo récord.
  *
- * El área "canvas del juego" es un hueco: monta ahí el motor real y llama a
- * `addScore`, `loseLife` y `endGame`. Mientras no exista, un modo demo simula
+ * Con `engine`, el área de juego monta el motor real (ver ./engines.ts) y la
+ * pantalla refleja sus puntos, vidas, nivel y fase. Sin él, un modo demo simula
  * la partida para poder recorrer todos los estados.
  */
 
-type State = "loading" | "start" | "playing" | "pause" | "over" | "record";
+type State =
+  "loading" | "error" | "start" | "playing" | "pause" | "over" | "record";
 
 const MAX_LIVES = 3;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".split("");
@@ -35,12 +43,17 @@ export function GameScreen({
   globalRecord,
   globalHolder,
   personalBest,
+  engine,
+  controls,
 }: {
   slug: string;
   name: string;
   globalRecord: string;
   globalHolder: string;
   personalBest: string;
+  /** Motor real del juego; sin él se usa el modo demo. */
+  engine?: EngineKey;
+  controls: GameControls;
 }) {
   const [state, setState] = useState<State>("loading");
   const [progress, setProgress] = useState(0);
@@ -53,17 +66,25 @@ export function GameScreen({
   const [saved, setSaved] = useState(false);
   const cabinetRef = useRef<HTMLDivElement>(null);
   const [finalScore, setFinalScore] = useState(0);
+  // --- Modo motor ---
+  const engineRef = useRef<EngineHandle | null>(null);
+  const [engineReady, setEngineReady] = useState(false);
+  const [engineLevel, setEngineLevel] = useState(1);
+  const [enginePhase, setEnginePhase] = useState<EnginePhase>("idle");
+  const [won, setWon] = useState(false);
+  const Canvas = engine ? engines[engine].Canvas : null;
+  const credit = engine ? engines[engine].credit : undefined;
 
-  // --- Carga simulada de assets ---
+  // --- Carga simulada de assets (solo modo demo) ---
   useEffect(() => {
-    if (state !== "loading") return;
+    if (engine || state !== "loading") return;
     if (progress >= 14) {
       const done = setTimeout(() => setState("start"), 250);
       return () => clearTimeout(done);
     }
     const t = setTimeout(() => setProgress((p) => p + 1), 90);
     return () => clearTimeout(t);
-  }, [state, progress]);
+  }, [engine, state, progress]);
 
   const endGame = useCallback(
     (final: number) => {
@@ -77,12 +98,19 @@ export function GameScreen({
   const start = useCallback(() => {
     setScore(0);
     setLives(MAX_LIVES);
+    setEngineLevel(1);
+    setWon(false);
+    const handle = engineRef.current;
+    if (handle) {
+      if (state === "start") handle.start();
+      else handle.restart();
+    }
     setState("playing");
-  }, []);
+  }, [state]);
 
   // --- Modo demo: puntos continuos, una vida menos cada ~6 s ---
   useEffect(() => {
-    if (state !== "playing") return;
+    if (engine || state !== "playing") return;
     const tick = setInterval(
       () => setScore((s) => s + 137 + Math.floor(Math.random() * 400)),
       100,
@@ -92,12 +120,72 @@ export function GameScreen({
       clearInterval(tick);
       clearInterval(hit);
     };
-  }, [state]);
+  }, [engine, state]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- transición al quedarse sin vidas
-    if (state === "playing" && lives <= 0) endGame(score);
-  }, [lives, state, score, endGame]);
+    if (!engine && state === "playing" && lives <= 0) endGame(score);
+  }, [engine, lives, state, score, endGame]);
+
+  // --- Modo motor: eventos del motor → estado de la pantalla ---
+  const engineEvents: EngineEvents = {
+    onProgress: (loaded, total) =>
+      setProgress(Math.round((loaded / total) * 14)),
+    onReady: () => {
+      setEngineReady(true);
+      setState((s) => (s === "loading" ? "start" : s));
+    },
+    onError: () => setState("error"),
+    onStats: (stats) => {
+      setScore(stats.score);
+      setLives(stats.lives);
+      setEngineLevel(stats.level);
+    },
+    onPhase: setEnginePhase,
+    onEnd: (result) => {
+      setWon(result.won);
+      endGame(result.score);
+    },
+  };
+
+  // La pausa de la pantalla congela el motor; al volver a jugar, se reanuda.
+  useEffect(() => {
+    const handle = engineRef.current;
+    if (!handle) return;
+    if (state === "pause") handle.pause();
+    else if (state === "playing") handle.resume();
+  }, [state]);
+
+  useEffect(() => {
+    engineRef.current?.setMuted(!sound);
+  }, [sound, engineReady]);
+
+  // Pausa automática al cambiar de pestaña, perder el foco o salir de pantalla
+  // completa (en pantalla completa, Escape la cierra antes de llegar al juego).
+  useEffect(() => {
+    if (!engine || state !== "playing") return;
+    const pause = () => setState("pause");
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") pause();
+    };
+    const onFullscreen = () => {
+      if (!document.fullscreenElement) pause();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener("fullscreenchange", onFullscreen);
+    window.addEventListener("blur", pause);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("fullscreenchange", onFullscreen);
+      window.removeEventListener("blur", pause);
+    };
+  }, [engine, state]);
+
+  const retryAssets = useCallback(() => {
+    setProgress(0);
+    setState("loading");
+    engineRef.current?.retryAssets();
+  }, []);
 
   const togglePause = useCallback(() => {
     setState((s) =>
@@ -164,9 +252,10 @@ export function GameScreen({
 
   const shownScore =
     state === "over" || state === "record" ? finalScore : score;
-  const shownLives = state === "over" || state === "record" ? 0 : lives;
+  const shownLives =
+    state === "over" || state === "record" ? (won ? lives : 0) : lives;
   const level = String(
-    Math.min(99, 1 + Math.floor(shownScore / 9000)),
+    engine ? engineLevel : Math.min(99, 1 + Math.floor(shownScore / 9000)),
   ).padStart(2, "0");
 
   const overlay = (
@@ -181,6 +270,9 @@ export function GameScreen({
       globalHolder={globalHolder}
       initials={initials}
       cursor={cursor}
+      tip={controls.tip}
+      won={won}
+      onRetryAssets={retryAssets}
       onStart={start}
       onResume={togglePause}
       onRestart={start}
@@ -277,15 +369,39 @@ export function GameScreen({
             {name}
           </div>
           <div
-            className="lm-stripes-dark relative mx-3 my-2 aspect-[3/4] overflow-hidden rounded-lg border-[6px] border-[#050509] lg:m-0 lg:aspect-[4/3] lg:rounded-[10px] lg:border-[10px]"
+            className={`relative mx-3 my-2 overflow-hidden rounded-lg border-[6px] border-[#050509] lg:m-0 lg:aspect-[4/3] lg:rounded-[10px] lg:border-[10px] ${
+              Canvas
+                ? "aspect-[4/3] bg-black [:fullscreen_&]:mx-auto [:fullscreen_&]:w-[min(100%,calc((100dvh-15rem)*4/3))]"
+                : "lm-stripes-dark aspect-[3/4]"
+            }`}
             style={{ boxShadow: "inset 0 0 60px rgba(0,0,0,.9)" }}
           >
-            {/* Aquí se monta el <canvas> del juego real */}
-            <span className="absolute bottom-3 left-3.5 font-mono text-[11px] text-muted">
-              canvas del juego{state === "playing" ? " · demo" : ""}
-            </span>
+            {Canvas ? (
+              <div className="absolute inset-0">
+                <Canvas
+                  events={engineEvents}
+                  onHandle={(handle) => (engineRef.current = handle)}
+                />
+              </div>
+            ) : (
+              <span className="absolute bottom-3 left-3.5 font-mono text-[11px] text-muted">
+                canvas del juego{state === "playing" ? " · demo" : ""}
+              </span>
+            )}
+            {engine && state === "playing" && (
+              <EngineNotice
+                phase={enginePhase}
+                level={engineLevel}
+                onContinue={() => engineRef.current?.action()}
+              />
+            )}
             {overlay}
           </div>
+          {credit && (
+            <p className="mx-3 -mt-3 text-right font-mono text-[11px] text-muted lg:mx-0 lg:-mt-2">
+              {credit}
+            </p>
+          )}
           <div className="hidden justify-center gap-2.5 lg:flex">
             <CtrlButton
               onClick={togglePause}
@@ -297,7 +413,10 @@ export function GameScreen({
               onClick={() => setSound((v) => !v)}
             >{`♪  Sonido${sound ? "" : " (off)"}`}</CtrlButton>
             <CtrlButton onClick={fullscreen}>⤢ Pantalla completa</CtrlButton>
-            <CtrlButton onClick={start} disabled={state === "loading"}>
+            <CtrlButton
+              onClick={start}
+              disabled={state === "loading" || state === "error"}
+            >
               ↻ Reiniciar
             </CtrlButton>
           </div>
@@ -324,15 +443,33 @@ export function GameScreen({
             <span className="font-mono text-[11px] tracking-[1.5px]">
               CONTROLES
             </span>
-            <span>← ↑ → ↓ mover</span>
-            <span>ESPACIO disparar</span>
-            <span>X escudo · P pausa</span>
+            {controls.hud.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Controles táctiles (móvil) */}
-      <TouchControls onA={state === "start" ? start : undefined} />
+      {engine ? (
+        <TouchControls
+          pad={controls.pad}
+          aLabel="A · lanzar"
+          onA={
+            state === "start"
+              ? start
+              : state === "playing"
+                ? () => engineRef.current?.action()
+                : undefined
+          }
+          onDirection={(d) => engineRef.current?.setDirection(d)}
+        />
+      ) : (
+        <TouchControls
+          pad={controls.pad}
+          onA={state === "start" ? start : undefined}
+        />
+      )}
     </div>
   );
 }
@@ -399,6 +536,9 @@ function Overlay(p: {
   initials: string[];
   cursor: number;
   slug: string;
+  tip: string;
+  won: boolean;
+  onRetryAssets: () => void;
   onStart: () => void;
   onResume: () => void;
   onRestart: () => void;
@@ -426,8 +566,38 @@ function Overlay(p: {
             ))}
           </div>
           <span className="font-mono text-xs text-muted lg:text-[13px]">
-            Consejo: el escudo (X) se recarga recogiendo chatarra.
+            {p.tip}
           </span>
+        </div>
+      );
+    case "error":
+      return (
+        <div className={`${base} gap-5 bg-deep`} role="alert">
+          <span
+            className="font-pixel text-xl text-danger lg:text-[28px]"
+            style={{ textShadow: "0 0 12px rgba(255,59,59,.6)" }}
+          >
+            NO SE PUDO CARGAR EL JUEGO
+          </span>
+          <span className="text-sm text-muted">
+            Revisa tu conexión e inténtalo de nuevo.
+          </span>
+          <div className="mt-2 flex gap-3">
+            <button
+              type="button"
+              onClick={p.onRetryAssets}
+              autoFocus
+              className="lm-btn-primary h-[52px] rounded px-7 font-bold"
+            >
+              ↻ Reintentar
+            </button>
+            <Link
+              href={`/juegos/${p.slug}`}
+              className="lm-btn-ghost grid h-[52px] place-items-center rounded px-6 font-semibold"
+            >
+              Salir
+            </Link>
+          </div>
         </div>
       );
     case "start":
@@ -484,14 +654,25 @@ function Overlay(p: {
       const diff = p.best - p.finalScore;
       return (
         <div className={`${base} gap-5 bg-deep/[.85]`}>
-          <span
-            className="font-pixel text-[40px] text-danger lg:text-[64px]"
-            style={{
-              textShadow: "0 0 8px #FF3B3B,0 0 30px rgba(255,59,59,.7)",
-            }}
-          >
-            GAME OVER
-          </span>
+          {p.won ? (
+            <span
+              className="font-pixel text-[40px] text-lime lg:text-[64px]"
+              style={{
+                textShadow: "0 0 8px #39FF14,0 0 30px rgba(57,255,20,.7)",
+              }}
+            >
+              ¡VICTORIA!
+            </span>
+          ) : (
+            <span
+              className="font-pixel text-[40px] text-danger lg:text-[64px]"
+              style={{
+                textShadow: "0 0 8px #FF3B3B,0 0 30px rgba(255,59,59,.7)",
+              }}
+            >
+              GAME OVER
+            </span>
+          )}
           <div className="flex flex-col items-center gap-1.5">
             <span className="font-mono text-[13px] tracking-[2px] text-muted">
               PUNTUACIÓN FINAL
@@ -591,26 +772,92 @@ function Overlay(p: {
   }
 }
 
-function TouchControls({ onA }: { onA?: () => void }) {
-  // TODO: conectar a la entrada del motor del juego.
-  const pad =
-    "grid place-items-center border-[1.5px] border-cyan bg-line text-cyan active:bg-cyan active:text-ink";
+/** Avisos intermedios del motor, con el estilo del portal (el motor no dibuja texto). */
+function EngineNotice({
+  phase,
+  level,
+  onContinue,
+}: {
+  phase: EnginePhase;
+  level: number;
+  onContinue: () => void;
+}) {
+  if (phase === "serving")
+    return (
+      <div className="pointer-events-none absolute inset-x-0 bottom-[22%] flex justify-center px-4 text-center">
+        <Blink className="font-pixel text-xs text-gold lg:text-lg">
+          <span className="lg:hidden">TOCA O PULSA A PARA LANZAR</span>
+          <span className="hidden lg:inline">
+            PULSA ESPACIO O HAZ CLIC PARA LANZAR
+          </span>
+        </Blink>
+      </div>
+    );
+  if (phase === "levelComplete")
+    return (
+      // Sin foco de teclado: Espacio lo gestiona solo el motor, así una pulsación
+      // nunca continúa y lanza a la vez.
+      <button
+        type="button"
+        tabIndex={-1}
+        onClick={onContinue}
+        className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-deep/60 px-4 text-center"
+      >
+        <span className="lm-neon-pink font-pixel text-2xl leading-none lg:text-[44px]">
+          NIVEL {level} COMPLETADO
+        </span>
+        <Blink className="font-pixel text-xs text-gold lg:text-base">
+          <span className="lg:hidden">Toca o pulsa A para continuar</span>
+          <span className="hidden lg:inline">
+            Pulsa Espacio o haz clic para continuar
+          </span>
+        </Blink>
+      </button>
+    );
+  return null;
+}
+
+function TouchControls({
+  pad: padConfig,
+  onA,
+  aLabel = "A · disparar",
+  onDirection,
+}: {
+  pad: GameControls["pad"];
+  onA?: () => void;
+  aLabel?: string;
+  /** Solo con motor: dirección mantenida de ◀ ▶. */
+  onDirection?: (d: -1 | 0 | 1) => void;
+}) {
+  const pad = `grid place-items-center border-[1.5px] border-cyan bg-line text-cyan active:bg-cyan active:text-ink${onDirection ? " touch-none select-none" : ""}`;
+  const hold = (d: -1 | 1) =>
+    onDirection && {
+      onPointerDown: () => onDirection(d),
+      onPointerUp: () => onDirection(0),
+      onPointerCancel: () => onDirection(0),
+      onPointerLeave: () => onDirection(0),
+    };
   return (
     <div className="flex items-center justify-between px-7 pt-6 pb-8 lg:hidden">
       <div className="grid grid-cols-[repeat(3,48px)] grid-rows-[repeat(3,48px)]">
         <span />
-        <button
-          type="button"
-          aria-label="Arriba"
-          className={`${pad} rounded-t-md`}
-        >
-          ▲
-        </button>
+        {padConfig.vertical ? (
+          <button
+            type="button"
+            aria-label="Arriba"
+            className={`${pad} rounded-t-md`}
+          >
+            ▲
+          </button>
+        ) : (
+          <span />
+        )}
         <span />
         <button
           type="button"
           aria-label="Izquierda"
           className={`${pad} rounded-l-md`}
+          {...hold(-1)}
         >
           ◀
         </button>
@@ -619,31 +866,38 @@ function TouchControls({ onA }: { onA?: () => void }) {
           type="button"
           aria-label="Derecha"
           className={`${pad} rounded-r-md`}
+          {...hold(1)}
         >
           ▶
         </button>
         <span />
-        <button
-          type="button"
-          aria-label="Abajo"
-          className={`${pad} rounded-b-md`}
-        >
-          ▼
-        </button>
+        {padConfig.vertical ? (
+          <button
+            type="button"
+            aria-label="Abajo"
+            className={`${pad} rounded-b-md`}
+          >
+            ▼
+          </button>
+        ) : (
+          <span />
+        )}
         <span />
       </div>
       <div className="flex items-end gap-4">
+        {padConfig.b && (
+          <button
+            type="button"
+            aria-label="B · escudo"
+            className="grid size-[60px] place-items-center rounded-full border-2 border-cyan bg-line font-pixel text-xl text-cyan"
+            style={{ boxShadow: "inset 0 -4px 0 rgba(0,0,0,.4)" }}
+          >
+            B
+          </button>
+        )}
         <button
           type="button"
-          aria-label="B · escudo"
-          className="grid size-[60px] place-items-center rounded-full border-2 border-cyan bg-line font-pixel text-xl text-cyan"
-          style={{ boxShadow: "inset 0 -4px 0 rgba(0,0,0,.4)" }}
-        >
-          B
-        </button>
-        <button
-          type="button"
-          aria-label="A · disparar"
+          aria-label={aLabel}
           onClick={onA}
           className="mb-6 grid size-[72px] place-items-center rounded-full bg-pink font-pixel text-2xl text-ink active:translate-y-[3px]"
           style={{
