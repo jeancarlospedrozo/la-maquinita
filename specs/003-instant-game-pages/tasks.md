@@ -76,7 +76,7 @@ None: the three stories touch independent concerns. US1 and US3 both edit
 
 - [x] T012 [P] Update `CLAUDE.md`: game pages read `params` inside `<Suspense>` with `DetailSkeleton` / `PlaySkeleton` (no top-level `await params` in pages); unknown slugs render the not-found page with status 200 + `noindex` (research R3); detail titles fit via `lib/titleFit.ts` and `@container`; the detail controls panel is limited to 3 rows
 - [x] T013 Run the quality gates: `npm run lint`, `npx tsc --noEmit`, `npm run format:check`, `npm run build` (every `/juegos/[slug]` and `/juegos/[slug]/jugar` path still prerendered)
-- [ ] T014 Run quickstart Scenarios 1–5 at 390 px and 1440 px, including Scenario 4 (unknown slug, fast clicks, reduced motion) and Scenario 5 (home, catalog and rankings unchanged)
+- [x] T014 Run quickstart Scenarios 1–5 at 390 px and 1440 px, including Scenario 4 (unknown slug, fast clicks, reduced motion) and Scenario 5 (home, catalog and rankings unchanged)
 
 ---
 
