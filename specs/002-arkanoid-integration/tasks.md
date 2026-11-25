@@ -133,7 +133,7 @@ record flow and achievable records.
 - [x] T036 [P] Update `CLAUDE.md` Architecture: real engines live in `lib/games/<slug>/` (framework-free, created in an effect, `destroy()` on unmount), are registered in `components/game/engines.ts` via `next/dynamic` `ssr: false`, follow `specs/002-arkanoid-integration/contracts/engine.md`, and serve assets from `public/games/<slug>/`; note that `GameScreen` keeps the demo for games without `engine`
 - [x] T037 Remove the Sync Impact Report HTML comment at the top of `.specify/memory/constitution.md` before committing (constitution v1.0.1 amendment)
 - [x] T038 Run the quality gates: `npm run lint`, `npx tsc --noEmit`, `npm run format:check`, `npm run build` (every `/juegos/[slug]/jugar` route must still prerender); fix any failure without suppressions
-- [ ] T039 Run quickstart Scenarios 1–8 at 390 px and 1440 px, including Scenario 5 (blocked assets, leaving mid-game, resize, CPU throttling, and 5.6 smoothness for SC-004) and Scenario 8 (only the allowed arcade terms in English), and note any failure as a follow-up task
+- [x] T039 Run quickstart Scenarios 1–8 at 390 px and 1440 px, including Scenario 5 (blocked assets, leaving mid-game, resize, CPU throttling, and 5.6 smoothness for SC-004) and Scenario 8 (only the allowed arcade terms in English), and note any failure as a follow-up task
 
 ---
 
