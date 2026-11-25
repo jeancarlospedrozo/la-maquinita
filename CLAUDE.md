@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-La Maquinita is a Spanish-language arcade games portal built with Next.js 16 (App Router), React 19, and Tailwind CSS v4. All UI copy is in Spanish. The screens come from the Claude Design project "La Maquinita.dc.html" (desktop 1440 px plus mobile 390 px variants). They are implemented responsively in one tree: unprefixed classes are mobile and `lg:` is desktop.
+La Maquinita is a Spanish-language arcade games portal built with Next.js 16 (App Router), React 19, and Tailwind CSS v4. All UI copy is in Spanish, except the design's arcade terms "PRESS START", "GAME OVER" and "INSERT COIN TO CONTINUE" (closed list, constitution Principle I). The screens come from the Claude Design project "La Maquinita.dc.html" (desktop 1440 px plus mobile 390 px variants). They are implemented responsively in one tree: unprefixed classes are mobile and `lg:` is desktop.
 
 ## Commands
 

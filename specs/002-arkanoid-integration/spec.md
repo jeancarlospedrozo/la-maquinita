@@ -261,7 +261,9 @@ ball and clear at least one brick without a keyboard or mouse.
 - **SC-005**: Pausing and resuming 10 times in a row never changes the ball's position or
   costs a life.
 - **SC-006**: After leaving the play screen, no game sound plays and no game activity continues.
-- **SC-007**: No English text is visible anywhere on this game's play screen.
+- **SC-007**: No English text is visible anywhere on this game's play screen, except the closed
+  list of arcade terms from the reference design allowed by Constitution Principle I ("PRESS
+  START", "GAME OVER", "INSERT COIN TO CONTINUE"). Every text this feature adds is in Spanish.
 - **SC-008**: The play screens of all other catalog games behave exactly as before.
 
 ## Assumptions

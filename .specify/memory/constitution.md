@@ -1,3 +1,12 @@
+<!--
+Sync Impact Report (remove before committing)
+- Version: 1.0.0 → 1.0.1 (PATCH: clarifies Principle I with a closed, explicit exception)
+- Modified principles: I. Spanish-First Experience (title unchanged; adds arcade-terms exception)
+- Added sections: none · Removed sections: none
+- Templates: no changes needed (plan/spec/tasks templates read the constitution at runtime)
+- Follow-up TODOs: none
+-->
+
 # La Maquinita Constitution
 
 ## Core Principles
@@ -8,9 +17,14 @@
   MUST be written in Spanish.
 - Code identifiers, comments, and developer documentation MAY stay in English.
 - A feature is not complete while any visible English string remains in the UI.
+- Exception: the arcade terms that appear in the Claude Design reference MAY be shown verbatim, as
+  visual style (like the pixel font). The list is closed: "PRESS START", "GAME OVER",
+  "INSERT COIN TO CONTINUE". Any other user-facing text, including new arcade-style titles, MUST
+  be in Spanish. Adding a term to this list requires a constitution amendment.
 
 Rationale: La Maquinita is a Spanish-language arcade portal; mixed-language UI breaks the product's
-identity and the reference design.
+identity and the reference design. The listed terms come from that design (Principle II) and are
+shared by the whole portal; translating them is a separate, portal-wide decision.
 
 ### II. Design Fidelity
 
@@ -111,4 +125,4 @@ screens, and security defaults are cheapest to get right from the first table.
 - Reviewers MUST check pull requests for compliance with the principles above; deviations MUST be
   justified explicitly or fixed before merge.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-23 | **Last Amended**: 2026-11-23
+**Version**: 1.0.1 | **Ratified**: 2026-11-23 | **Last Amended**: 2026-11-25
