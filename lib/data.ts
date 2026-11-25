@@ -192,11 +192,9 @@ export const games: Game[] = [
       "El clásico de paleta y ladrillos en tres niveles: el muro, la pirámide y el ajedrez. En cada nivel la pelota va más rápido, y solo tienes 3 vidas para romperlo todo.",
     controls: {
       desktop: [
-        { keys: ["←", "→"], label: "Mover la paleta" },
-        { keys: ["A", "D"], label: "También mueven la paleta" },
+        { keys: ["←", "→", "A", "D"], label: "Mover la paleta (o el ratón)" },
         { keys: ["ESPACIO"], label: "Lanzar · continuar" },
         { keys: ["P"], label: "Pausa" },
-        { keys: [], label: "También con el ratón" },
       ],
       hud: [
         "← → · A D mover",
@@ -323,6 +321,18 @@ export const games: Game[] = [
       "Robots de chatarra pelean al ritmo de la música. Golpea en el compás para cargar el super.",
   },
 ];
+
+// El panel de controles de la ficha no puede pasar de 3 filas: su altura fija la de la
+// columna de información y, con el tráiler 16:9, el ancho de las columnas (ver
+// specs/003-instant-game-pages/research.md R5). Más filas desbordan la página a 1440 px.
+if (process.env.NODE_ENV !== "production") {
+  for (const g of games) {
+    if ((g.controls?.desktop.length ?? 0) > 3)
+      throw new Error(
+        `${g.name}: el panel de controles admite como máximo 3 filas`,
+      );
+  }
+}
 
 export function getGame(slug: string) {
   return games.find((g) => g.slug === slug);
