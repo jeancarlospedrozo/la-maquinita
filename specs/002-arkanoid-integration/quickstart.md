@@ -62,12 +62,17 @@ No `.env.local` is needed: this feature does not touch Supabase.
    activity in the Performance panel.
 4. Rotate/resize during play → field rescales, state kept.
 5. CPU throttling 6× → ball never passes through paddle or bricks.
+6. Smoothness (SC-004): DevTools → Performance, record 10 s of play on level 3 without
+   throttling → frame rate stays at ~60 fps and no task exceeds 50 ms. Repeat in device mode
+   with 4× CPU throttling as the mid-range phone proxy.
 
 ## Scenario 6 – Nothing else changed (FR-016, SC-008)
 
 1. `/juegos/cometa-loca/jugar` → demo mode exactly as before (portrait slot on mobile,
    "canvas del juego · demo", original controls text and tip).
 2. `/rankings` and `/` → same layout; luzbel.exe now listed under "Robo Rumba".
+3. `/juegos/ladrillazo` leaderboard: all scores ≤ 1.500, top luzbel.exe 1.380, your row 640.
+   `/juegos/cometa-loca` keeps the shared leaderboard (kaiser_88 1.284.550 …).
 
 ## Scenario 7 – Quality gates
 

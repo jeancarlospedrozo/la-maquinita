@@ -1,12 +1,3 @@
-<!--
-Sync Impact Report (remove before committing)
-- Version: 1.0.0 → 1.0.1 (PATCH: clarifies Principle I with a closed, explicit exception)
-- Modified principles: I. Spanish-First Experience (title unchanged; adds arcade-terms exception)
-- Added sections: none · Removed sections: none
-- Templates: no changes needed (plan/spec/tasks templates read the constitution at runtime)
-- Follow-up TODOs: none
--->
-
 # La Maquinita Constitution
 
 ## Core Principles

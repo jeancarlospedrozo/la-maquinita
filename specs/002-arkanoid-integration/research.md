@@ -151,10 +151,13 @@ and messages.
 
 - **Decision**: The engine draws no text (FR-003). `GameScreen` renders:
   - `serving`: a small, non-blocking notice near the bottom of the game area
-    (`font-pixel`, `text-gold`, `Blink`): "PULSA ESPACIO O TOCA PARA LANZAR" (desktop shows
-    "Espacio o clic", mobile "Toca o pulsa A").
+    (`font-pixel`, `text-gold`, `Blink`): "PULSA ESPACIO O HAZ CLIC PARA LANZAR" on desktop
+    (`lg:`) and "TOCA O PULSA A PARA LANZAR" on mobile.
   - `levelComplete`: a centred notice "NIVEL N COMPLETADO" (`lm-neon-pink` style title) with
-    a hint to continue; clicking/tapping it calls `action()`.
+    a hint to continue; clicking/tapping it calls `action()`. The button takes no keyboard
+    focus (`tabIndex={-1}`, no `autoFocus`): Space is handled only by the engine, and after
+    any phase change the engine ignores action input until the next Space `keyup`, so a single
+    press never continues and launches at once.
   - End screens: the existing `over` overlay gains a `won` flag; when true the title is
     "¡VICTORIA!" in `text-lime` with the matching glow, the rest unchanged; `record` precedes
     it when the score beats the best (clarification Q3).

@@ -72,12 +72,13 @@ Existing `State` gains one value and the end screen gains one flag:
 
 ### `Game` (existing type, new optional fields)
 
-| Field          | Type           | Rules                                                                      |
-| -------------- | -------------- | -------------------------------------------------------------------------- |
-| `engine`       | `"ladrillazo"` | Optional. Present ⇒ the play screen mounts the real engine.                |
-| `personalBest` | `string`       | Optional, formatted like `record` ("640"). Fallback: `currentPlayer.best`. |
-| `recordHolder` | `string`       | Optional. Fallback: the `top5` lookup used today, then `"kaiser_88"`.      |
-| `controls`     | `GameControls` | Optional. Fallback: `defaultControls` (today's text, unchanged).           |
+| Field          | Type                                                            | Rules                                                                              |
+| -------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `engine`       | `"ladrillazo"`                                                  | Optional. Present ⇒ the play screen mounts the real engine.                        |
+| `personalBest` | `string`                                                        | Optional, formatted like `record` ("640"). Fallback: `currentPlayer.best`.         |
+| `recordHolder` | `string`                                                        | Optional. Fallback: the `top5` lookup used today, then `"kaiser_88"`.              |
+| `controls`     | `GameControls`                                                  | Optional. Fallback: `defaultControls` (today's text, unchanged).                   |
+| `leaderboard`  | `{ name: string; score: string; me?: boolean; pos?: number }[]` | Optional, same shape as `gameLeaderboard`. Fallback: the shared `gameLeaderboard`. |
 
 ### `GameControls` (new type)
 
@@ -90,8 +91,8 @@ Existing `State` gains one value and the end screen gains one flag:
 
 Ladrillazo values:
 
-- `desktop`: `["←","→"] / "A D" → "Mover la paleta"`, `["ESPACIO"] → "Lanzar · continuar"`,
-  `["P"] → "Pausa"`; plus "También con el ratón".
+- `desktop` rows, in order: `["←","→"]` "Mover la paleta"; `["A","D"]` "También mueven la
+  paleta"; `["ESPACIO"]` "Lanzar · continuar"; `["P"]` "Pausa"; `[]` "También con el ratón".
 - `touch`: "Táctil: ◀ ▶ o arrastra para mover, A o toca para lanzar."
 - `tip`: "Consejo: el borde de la paleta desvía más la pelota."
 - `pad`: `{ vertical: false, b: false }`.
@@ -111,3 +112,9 @@ Ladrillazo values:
 `top5[1]` and `podium[0]` (luzbel.exe, 742.110, "Ladrillazo") are reassigned to game
 "Robo Rumba" with the same score, name and position. No other ranking row references
 Ladrillazo.
+
+### Ladrillazo leaderboard (detail page)
+
+`leaderboard`: luzbel.exe 1.380 · nia.pix 1.290 · vector_v 1.170 · tuki 1.050 · raydo 960 ·
+"pixel_pao (tú)" 640 (`me: true`, `pos: 38`) · quark 610 · m0nch1 580. All ≤ 1 500; the first
+row matches `record` and `recordHolder`, the player's row matches `personalBest`.

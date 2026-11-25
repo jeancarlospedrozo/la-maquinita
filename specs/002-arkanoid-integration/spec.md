@@ -195,8 +195,8 @@ ball and clear at least one brick without a keyboard or mouse.
   depends on where the ball hits it.
 - **FR-003**: The in-between moments of the game MUST be announced with notices in the portal's
   visual style (pixel font, neon colours, as "PRESS START" and "PAUSA"), shown over the game
-  area: waiting to launch ("Pulsa Espacio o toca para lanzar") and "Nivel N completado" (with
-  how to continue). The game itself MUST NOT draw any text on the playfield. Victory and game
+  area: waiting to launch ("PULSA ESPACIO O HAZ CLIC PARA LANZAR" on desktop, "TOCA O PULSA A
+  PARA LANZAR" on mobile) and "Nivel N completado" (with how to continue). The game itself MUST NOT draw any text on the playfield. Victory and game
   over are shown only by the portal's end-of-game screens (FR-006).
 - **FR-004**: The artwork credit "Gráficos: Petraheim" MUST remain visible on the play screen of
   this game.
@@ -223,9 +223,10 @@ ball and clear at least one brick without a keyboard or mouse.
   0 points.
 - **FR-011**: The playfield MUST scale to fit the available game area (desktop, mobile and full
   screen) while keeping its proportions and crisp pixel art.
-- **FR-012**: The controls panel, the loading tip and the touch controls' labels MUST describe
-  only this game's real controls in Spanish (move with ← → / A D / mouse, launch with Espacio or
-  clic, pause with P); unused touch buttons MUST be hidden or disabled for this game.
+- **FR-012**: The controls panel of the play screen and of the game's detail page, the loading
+  tip and the touch controls' labels MUST describe only this game's real controls in Spanish
+  (move with ← → / A D / mouse, launch with Espacio or clic, pause with P); unused touch buttons
+  MUST be hidden for this game.
 
 #### Catalog and data
 
@@ -235,7 +236,9 @@ ball and clear at least one brick without a keyboard or mouse.
 - **FR-014**: The mock global record, rankings and personal-best values for this game MUST be
   achievable with the real scoring (at most 1 500 points), so the "¡NUEVO RÉCORD!" flow can be
   reached by playing. This game gets its own mock personal best (today one shared value,
-  84.120, is shown for every game); the other games keep showing the shared value.
+  84.120, is shown for every game); the other games keep showing the shared value. This
+  includes the game's leaderboard on its detail page: every score is at most 1 500 and the
+  player's own row shows the personal best (640); the other games keep the shared leaderboard.
 - **FR-015**: Saving the initials of a new record MUST keep the existing behaviour (updates the
   personal best for the session, with the existing marker for the future rankings API); no score
   is sent to a backend in this feature.
